@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Venta{% endblock %}
+{% block page_title %}Detalle de venta{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+    <h2>Información General</h2>
+
+    <p><strong>N° Venta:</strong> {{ venta[0] }}</p>
+    <p><strong>Fecha:</strong> {{ venta[1] }}</p>
+    <p><strong>Cliente:</strong> {{ venta[2] }} {{ venta[3] }}</p>
+    <p><strong>DNI:</strong> {{ venta[4] }}</p>
+    <p><strong>Teléfono:</strong> {{ venta[5] }}</p>
+    <p><strong>Vendedor:</strong> {{ venta[6] }} {{ venta[7] }}</p>
+    <p><strong>Sucursal:</strong> {{ venta[8] }}</p>
+    <p><strong>Tipo:</strong> {{ venta[9] }}</p>
+    <p><strong>Total:</strong> ${{ venta[10] }}</p>
+    <p><strong>Estado:</strong> {{ venta[11] }}</p>
+</div>
+
+<br>
+
+{% if plan_canje %}
+<div class="panel">
+    <h2>Plan Canje</h2>
+
+    <p><strong>Equipo entregado:</strong> {{ plan_canje[0] }} {{ plan_canje[1] }}</p>
+    <p><strong>N° Serie / IMEI:</strong> {{ plan_canje[2] or "No informado" }}</p>
+    <p><strong>Estado del equipo:</strong> {{ plan_canje[3] or "Sin observaciones" }}</p>
+    <p><strong>Valor tomado:</strong> ${{ plan_canje[4] }}</p>
+    <p><strong>Importe abonado por cliente:</strong> ${{ plan_canje[5] }}</p>
+
+    {% if plan_canje[6] %}
+        <p><strong>Foto del equipo entregado:</strong></p>
+        <a href="{{ url_for('static', filename=plan_canje[6]) }}" target="_blank">
+            <img src="{{ url_for('static', filename=plan_canje[6]) }}"
+                 alt="Foto equipo plan canje"
+                 style="width:250px; border-radius:10px; border:1px solid #ccc; cursor:pointer;">
+        </a>
+    {% endif %}
+</div>
+
+<br>
+{% endif %}
+
+<div class="panel">
+    <h2>Estado de firma</h2>
+
+    {% if venta[12] == "firmado" %}
+        <p><strong>Estado:</strong> Firmado</p>
+        <p><strong>Fecha firma:</strong> {{ venta[13] }}</p>
+
+        {% if venta[14] %}
+            <p><strong>Firma del cliente:</strong></p>
+            <a href="{{ url_for('static', filename=venta[14]) }}" target="_blank">
+                <img src="{{ url_for('static', filename=venta[14]) }}"
+                     alt="Firma cliente"
+                     style="width:250px; border-radius:10px; border:1px solid #ccc;">
+            </a>
+        {% endif %}
+    {% else %}
+        <p><strong>Estado:</strong> Pendiente de firma</p>
+
+        <a class="btn" href="{{ url_for('firma.solicitar_firma_venta', venta_id=venta[0]) }}">
+            Solicitar firma al cliente
+        </a>
+
+        {% if venta[15] %}
+            <br><br>
+            <a class="btn btn-secondary"
+               href="{{ url_for('firma.firmar_documento', token=venta[15]) }}"
+               target="_blank">
+                Abrir enlace de firma
+            </a>
+        {% endif %}
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Productos</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for d in detalles %}
+            <tr>
+                <td>{{ d[0] }} {{ d[1] }}</td>
+                <td>{{ d[2] }}</td>
+                <td>${{ d[3] }}</td>
+                <td>${{ d[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Pagos</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Medio</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in pagos %}
+            <tr>
+                <td>{{ p[0] }}</td>
+                <td>${{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<br>
+
+<a class="btn" href="{{ url_for('factura.crear_factura_venta', venta_id=venta[0]) }}">
+    Facturar venta
+</a>
+
+<a class="btn btn-secondary" href="{{ url_for('venta.listar_ventas') }}">
+    Volver
+</a>
+
+{% endblock %}

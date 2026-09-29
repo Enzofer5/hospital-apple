@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Movimientos de stock{% endblock %}
+{% block page_title %}Movimientos de stock{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('stock.cargar_stock') }}">Cargar stock</a>
+<a class="btn btn-secondary" href="{{ url_for('stock.listar_stock') }}">Volver al stock</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" value="{{ filtros.marca }}">
+            </div>
+
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" value="{{ filtros.modelo }}">
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id">
+                    <option value="">Todas</option>
+                    {% for s in sucursales %}
+                        <option value="{{ s[0] }}" {% if filtros.sucursal_id == s[0]|string %}selected{% endif %}>
+                            {{ s[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Tipo</label>
+                <select name="tipo">
+                    <option value="">Todos</option>
+                    <option value="ingreso" {% if filtros.tipo == "ingreso" %}selected{% endif %}>Ingreso</option>
+                    <option value="venta" {% if filtros.tipo == "venta" %}selected{% endif %}>Venta</option>
+                    <option value="plan_canje" {% if filtros.tipo == "plan_canje" %}selected{% endif %}>Plan canje</option>
+                    <option value="ajuste" {% if filtros.tipo == "ajuste" %}selected{% endif %}>Ajuste</option>
+                    <option value="reparacion" {% if filtros.tipo == "reparacion" %}selected{% endif %}>Reparación</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar movimientos.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Sucursal</th>
+            <th>Usuario</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Fecha</th>
+            <th>Observación</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for m in movimientos %}
+        <tr>
+            <td>{{ m[1] }} {{ m[2] }}</td>
+            <td>{{ m[3] }}</td>
+            <td>{{ m[4] }} {{ m[5] }}</td>
+            <td>{{ m[6] }}</td>
+            <td>{{ m[7] }}</td>
+            <td>{{ m[8] }}</td>
+            <td>{{ m[9] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if movimientos|length == 0 %}
+    <div class="empty-state">No se encontraron movimientos con esos filtros.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

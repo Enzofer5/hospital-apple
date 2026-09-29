@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Agenda - Calendario{% endblock %}
+{% block page_title %}Agenda{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('turno.crear_turno') }}">Nuevo turno</a>
+<a class="btn btn-secondary" href="{{ url_for('turno.listar_turnos') }}">Ver lista con filtros</a>
+<a class="btn btn-secondary" href="{{ url_for('turno.recordatorios_turnos') }}">Recordatorios pendientes</a>
+
+<br><br>
+
+<div class="panel">
+    <div class="calendario-header">
+        <a class="btn btn-secondary" href="{{ url_for('turno.calendario_turnos', mes=mes_anterior) }}">&laquo; Anterior</a>
+        <h2>{{ nombre_mes }} {{ anio }}</h2>
+        <a class="btn btn-secondary" href="{{ url_for('turno.calendario_turnos', mes=mes_siguiente) }}">Siguiente &raquo;</a>
+    </div>
+
+    <br>
+
+    <table class="calendario">
+        <thead>
+            <tr>
+                <th>Lun</th>
+                <th>Mar</th>
+                <th>Mié</th>
+                <th>Jue</th>
+                <th>Vie</th>
+                <th>Sáb</th>
+                <th>Dom</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for semana in semanas %}
+            <tr>
+                {% for dia in semana %}
+                    {% if dia is none %}
+                        <td class="dia-vacio"></td>
+                    {% else %}
+                        <td class="dia-calendario {% if dia.es_hoy %}dia-hoy{% endif %}">
+                            <a href="{{ url_for('turno.listar_turnos', fecha_desde=dia.fecha, fecha_hasta=dia.fecha, buscar='1') }}">
+                                <span class="numero-dia">{{ dia.numero }}</span>
+                                {% if dia.cantidad > 0 %}
+                                    <span class="badge badge-success">
+                                        {{ dia.cantidad }} turno{{ "s" if dia.cantidad > 1 else "" }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

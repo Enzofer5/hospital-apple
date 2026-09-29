@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Notas técnicas{% endblock %}
+{% block page_title %}Notas técnicas{% endblock %}
+
+{% block content %}
+
+<a class="btn btn-secondary" href="{{ url_for('reparacion.listar_reparaciones') }}">Ir a reparaciones</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Cliente / DNI</label>
+                <input type="text" name="cliente" value="{{ filtros.cliente }}">
+            </div>
+
+            <div>
+                <label>Técnico</label>
+                <select name="tecnico_id">
+                    <option value="">Todos</option>
+                    {% for t in tecnicos %}
+                        <option value="{{ t[0] }}" {% if filtros.tecnico_id == t[0]|string %}selected{% endif %}>
+                            {{ t[1] }} {{ t[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Desde</label>
+                <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}">
+            </div>
+
+            <div>
+                <label>Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}">
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar notas técnicas.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Equipo</th>
+            <th>Técnico</th>
+            <th>Diagnóstico</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in fichas %}
+        <tr>
+            <td>{{ f[1] }}</td>
+            <td>{{ f[2] }} {{ f[3] }}</td>
+            <td>{{ f[4] }} {{ f[5] }}</td>
+            <td>{{ f[6] or "Sin" }} {{ f[7] or "asignar" }}</td>
+            <td>{{ (f[8] or "")[:60] }}{% if f[8] and f[8]|length > 60 %}...{% endif %}</td>
+            <td>{{ f[9] }} {{ f[10] }}</td>
+            <td>
+                <a class="btn btn-secondary" href="{{ url_for('ficha_tecnica.detalle_ficha', id=f[0]) }}">
+                    Ver
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if fichas|length == 0 %}
+    <div class="empty-state">No se encontraron notas técnicas.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

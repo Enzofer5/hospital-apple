@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Crear producto{% endblock %}
+{% block page_title %}Crear producto{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" required>
+            </div>
+
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" required>
+            </div>
+
+            <div>
+                <label>Categoría</label>
+                <select name="categoria_id">
+                    <option value="">Sin categoría</option>
+                    {% for c in categorias %}
+                        <option value="{{ c[0] }}">{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Proveedor</label>
+                <select name="proveedor_id">
+                    <option value="">Sin proveedor</option>
+                    {% for p in proveedores %}
+                        <option value="{{ p[0] }}">{{ p[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Precio costo (USD)</label>
+                <input type="number" step="0.01" name="precio_costo_usd" value="0">
+            </div>
+
+            <div>
+                <label>Precio venta (USD)</label>
+                <input type="number" step="0.01" name="precio_venta_usd" value="0">
+            </div>
+
+            <div>
+                <label>Foto del producto</label>
+                <input type="file" name="foto" accept="image/*">
+            </div>
+        </div>
+
+        <br>
+
+        <label>Descripción</label>
+        <textarea name="descripcion" rows="4"></textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar producto</button>
+        <a class="btn btn-secondary" href="{{ url_for('producto.listar_productos') }}">Volver</a>
+    </form>
+</div>
+
+<div class="form-box">
+    <h3>Crear nueva categoría</h3>
+
+    <form method="POST" action="{{ url_for('producto.crear_categoria') }}">
+        <div class="form-grid">
+            <div>
+                <label>Nombre de categoría</label>
+                <input type="text" name="nombre_categoria" required>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit">Crear categoría</button>
+    </form>
+</div>
+
+{% endblock %}

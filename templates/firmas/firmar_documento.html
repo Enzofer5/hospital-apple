@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Firma digital</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+
+        .contenedor {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        canvas {
+            width: 100%;
+            height: 250px;
+            border: 2px solid #111827;
+            border-radius: 10px;
+            background: white;
+            touch-action: none;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>Firma digital</h1>
+
+    <p>
+        Cliente:
+        <strong>{{ solicitud[6] }} {{ solicitud[7] }}</strong>
+    </p>
+
+    <p>
+        DNI:
+        <strong>{{ solicitud[8] }}</strong>
+    </p>
+
+    <p>
+        Tipo de documento:
+        <strong>{{ solicitud[1] }}</strong>
+    </p>
+
+    <hr>
+
+    <p>Firmá dentro del recuadro usando el mouse o el dedo.</p>
+
+    <form method="POST" onsubmit="guardarFirma()">
+        <canvas id="canvasFirma"></canvas>
+
+        <input type="hidden" name="firma" id="firma">
+
+        <br>
+
+        <button type="button" class="btn-danger" onclick="limpiarFirma()">
+            Limpiar firma
+        </button>
+
+        <button type="submit" class="btn">
+            Confirmar firma
+        </button>
+    </form>
+</div>
+
+<script>
+    const canvas = document.getElementById("canvasFirma");
+    const ctx = canvas.getContext("2d");
+
+    function ajustarCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+    }
+
+    ajustarCanvas();
+    window.addEventListener("resize", ajustarCanvas);
+
+    let dibujando = false;
+
+    function obtenerPosicion(e) {
+        const rect = canvas.getBoundingClientRect();
+
+        if (e.touches && e.touches.length > 0) {
+            return {
+                x: e.touches[0].clientX - rect.left,
+                y: e.touches[0].clientY - rect.top
+            };
+        }
+
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    function iniciar(e) {
+        dibujando = true;
+        const pos = obtenerPosicion(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        e.preventDefault();
+    }
+
+    function dibujar(e) {
+        if (!dibujando) return;
+        const pos = obtenerPosicion(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        e.preventDefault();
+    }
+
+    function terminar(e) {
+        dibujando = false;
+        e.preventDefault();
+    }
+
+    canvas.addEventListener("mousedown", iniciar);
+    canvas.addEventListener("mousemove", dibujar);
+    canvas.addEventListener("mouseup", terminar);
+    canvas.addEventListener("mouseleave", terminar);
+
+    canvas.addEventListener("touchstart", iniciar);
+    canvas.addEventListener("touchmove", dibujar);
+    canvas.addEventListener("touchend", terminar);
+
+    function limpiarFirma() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function guardarFirma() {
+        document.getElementById("firma").value = canvas.toDataURL("image/png");
+    }
+</script>
+
+</body>
+</html>

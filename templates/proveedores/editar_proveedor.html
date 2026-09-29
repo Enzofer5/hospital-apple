@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Editar proveedor{% endblock %}
+{% block page_title %}Editar proveedor{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Nombre</label>
+                <input type="text" name="nombre" value="{{ proveedor[1] }}" required>
+            </div>
+
+            <div>
+                <label>CUIT</label>
+                <input type="text" name="cuit" value="{{ proveedor[2] }}">
+            </div>
+
+            <div>
+                <label>Email</label>
+                <input type="email" name="email" value="{{ proveedor[3] }}">
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="{{ proveedor[4] }}">
+            </div>
+
+            <div>
+                <label>Dirección</label>
+                <input type="text" name="direccion" value="{{ proveedor[5] }}">
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit">Actualizar proveedor</button>
+        <a class="btn btn-secondary" href="{{ url_for('proveedor.listar_proveedores') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Crear mano de obra{% endblock %}
+{% block page_title %}Crear mano de obra{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Nombre del trabajo</label>
+                <input type="text" name="nombre" required>
+            </div>
+
+            <div>
+                <label>Precio (USD)</label>
+                <input type="number" step="0.01" name="precio" value="0" required>
+            </div>
+
+            <div>
+                <label>Tiempo estimado</label>
+                <input type="text" name="tiempo_estimado" placeholder="Ej: 2 horas">
+            </div>
+        </div>
+
+        <br>
+
+        <label>Descripción</label>
+        <textarea name="descripcion" rows="4"></textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar</button>
+        <a class="btn btn-secondary" href="{{ url_for('mano_obra.listar_mano_obra') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

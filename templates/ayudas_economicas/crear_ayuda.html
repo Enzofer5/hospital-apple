@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar ayuda económica{% endblock %}
+{% block page_title %}Registrar ayuda económica{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <label>Empleado / estudiante</label>
+        <select name="usuario_id" required>
+            {% for e in empleados %}
+                <option value="{{ e[0] }}">
+                    {{ e[1] }} {{ e[2] }}{% if e[3] %} (modo estudiante){% endif %}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <div class="form-grid">
+            <div>
+                <label>Monto (USD)</label>
+                <input type="number" step="0.01" name="monto" required>
+            </div>
+        </div>
+
+        <br>
+
+        <label>Motivo</label>
+        <textarea name="motivo" rows="3"></textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar</button>
+    </form>
+</div>
+
+<a class="btn btn-secondary" href="{{ url_for('ayuda_economica.listar_ayudas') }}">Volver</a>
+
+{% endblock %}

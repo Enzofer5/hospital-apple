@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle compra{% endblock %}
+{% block page_title %}Detalle de compra{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+    <h2>Compra N° {{ compra[0] }}</h2>
+
+    <p><strong>Fecha:</strong> {{ compra[1] }}</p>
+    <p><strong>Proveedor:</strong> {{ compra[2] }}</p>
+    <p><strong>Sucursal:</strong> {{ compra[3] }}</p>
+    <p><strong>Usuario:</strong> {{ compra[4] }} {{ compra[5] }}</p>
+    <p><strong>Factura proveedor:</strong> {{ compra[6] or "Sin factura" }}</p>
+    <p><strong>Total:</strong> ${{ compra[7] }}</p>
+    <p><strong>Observación:</strong> {{ compra[8] or "Sin observaciones" }}</p>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Productos comprados</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Costo unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for d in detalles %}
+            <tr>
+                <td>{{ d[0] }} {{ d[1] }}</td>
+                <td>{{ d[2] }}</td>
+                <td>${{ d[3] }}</td>
+                <td>${{ d[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<br>
+
+<a class="btn btn-secondary" href="{{ url_for('compra.listar_compras') }}">Volver</a>
+
+{% endblock %}

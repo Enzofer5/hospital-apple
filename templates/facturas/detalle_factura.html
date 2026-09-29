@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle factura{% endblock %}
+{% block page_title %}Detalle de factura{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+
+        <div>
+            <h2>Factura {{ factura[1] }}</h2>
+
+            <p><strong>Tipo:</strong> {{ factura[2] }}</p>
+            <p><strong>Concepto:</strong> {{ factura[3] }}</p>
+            <p><strong>Estado:</strong> {{ factura[7] }}</p>
+            <p><strong>Fecha:</strong> {{ factura[8] }}</p>
+        </div>
+
+        <div style="text-align:right;">
+            {% if factura[14] %}
+                <span style="color:green;font-weight:bold;">
+                    PDF generado
+                </span>
+            {% else %}
+                <span style="color:#d35400;font-weight:bold;">
+                    PDF pendiente
+                </span>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="panel">
+
+    <h2>Datos del cliente</h2>
+
+    <p><strong>Nombre:</strong> {{ factura[9] }} {{ factura[10] }}</p>
+
+    <p><strong>DNI:</strong> {{ factura[11] }}</p>
+
+    <p><strong>Email:</strong> {{ factura[12] }}</p>
+
+    <p><strong>Teléfono:</strong> {{ factura[13] }}</p>
+
+</div>
+
+<br>
+
+<div class="panel">
+
+    <h2>Detalle de la factura</h2>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Descripción</th>
+
+                <th>Cantidad</th>
+
+                <th>Precio Unitario</th>
+
+                <th>Subtotal</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for d in detalles %}
+
+            <tr>
+
+                <td>{{ d[0] }}</td>
+
+                <td>{{ d[1] }}</td>
+
+                <td>${{ d[2] }}</td>
+
+                <td>${{ d[3] }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <br>
+
+    <div style="text-align:right;">
+
+        <p><strong>Subtotal:</strong> ${{ factura[4] }}</p>
+
+        <p><strong>Descuento:</strong> ${{ factura[5] }}</p>
+
+        <h2>Total: ${{ factura[6] }}</h2>
+
+    </div>
+
+</div>
+
+<br>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+    <a class="btn"
+       href="{{ url_for('factura.generar_pdf', id=factura[0]) }}">
+        Generar PDF
+    </a>
+
+    {% if factura[14] %}
+        <a class="btn"
+           href="{{ url_for('factura.ver_pdf', id=factura[0]) }}"
+           target="_blank">
+            Ver PDF
+        </a>
+    {% endif %}
+
+    <a class="btn btn-secondary"
+       href="{{ url_for('factura.listar_facturas') }}">
+        Volver
+    </a>
+
+    {% if factura[7] == "emitida" %}
+        <a class="btn btn-danger"
+           href="{{ url_for('factura.anular_factura', id=factura[0]) }}"
+           onclick="return confirm('¿Seguro que querés anular esta factura?')">
+            Anular factura
+        </a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

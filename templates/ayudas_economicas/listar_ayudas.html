@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Ayudas económicas{% endblock %}
+{% block page_title %}Ayudas económicas — Estudiantes{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('ayuda_economica.crear_ayuda') }}">Registrar ayuda</a>
+
+<br><br>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Estudiante</th>
+            <th>Monto</th>
+            <th>Motivo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in ayudas %}
+        <tr>
+            <td>{{ a[1] }}</td>
+            <td>{{ a[2] }} {{ a[3] }}</td>
+            <td>{{ a[5] }} {{ a[4] }}</td>
+            <td>{{ a[6] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if ayudas|length == 0 %}
+    <div class="empty-state">Todavía no se registraron ayudas económicas.</div>
+{% endif %}
+
+{% endblock %}

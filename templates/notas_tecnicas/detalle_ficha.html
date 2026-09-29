@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Nota técnica{% endblock %}
+{% block page_title %}Nota técnica{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+    <h2>Datos generales</h2>
+    <p><strong>Fecha:</strong> {{ ficha[1] }}</p>
+    <p><strong>Cliente:</strong> {{ ficha[8] }} {{ ficha[9] }} (DNI {{ ficha[10] }})</p>
+    <p><strong>Equipo:</strong> {{ ficha[12] }} {{ ficha[13] }} — N° Serie/IMEI: {{ ficha[14] }}</p>
+    <p><strong>Técnico:</strong> {{ ficha[15] or "Sin" }} {{ ficha[16] or "asignar" }}</p>
+
+    <br>
+
+    <a class="btn" href="{{ url_for('ficha_tecnica.enviar_email_ficha', id=ficha[0]) }}">
+        {% if ficha[18] %}Reenviar por email{% else %}Enviar por email al cliente{% endif %}
+    </a>
+    {% if ficha[18] %}
+        <span class="badge badge-success">Enviada por email</span>
+    {% endif %}
+    {% if not ficha[17] %}
+        <p style="color: var(--text-secondary); font-size:13px; margin-top:8px;">
+            El cliente no tiene email cargado — agregalo en su ficha de Cliente para poder enviarle esta nota.
+        </p>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Diagnóstico</h2>
+    <p>{{ ficha[2] or "Sin diagnóstico cargado." }}</p>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Notas técnicas</h2>
+    <p style="white-space: pre-wrap;">{{ ficha[3] or "Sin notas cargadas." }}</p>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Costos</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Mano de obra</h3>
+            <p>{{ ficha[4] }} {{ ficha[5] }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Repuestos</h3>
+            <p>{{ ficha[4] }} {{ ficha[6] }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Total</h3>
+            <p>{{ ficha[4] }} {{ ficha[7] }}</p>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Fotos</h2>
+    <br>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+        {% for f in fotos %}
+        <a href="{{ url_for('static', filename=f[1]) }}" target="_blank">
+            <img src="{{ url_for('static', filename=f[1]) }}"
+                 alt="Foto nota técnica"
+                 style="width:200px; border-radius:10px; border:1px solid #ccc;">
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if fotos|length == 0 %}
+        <div class="empty-state">Todavía no hay fotos cargadas.</div>
+    {% endif %}
+
+    <br>
+
+    <form method="POST" action="{{ url_for('ficha_tecnica.agregar_foto', id=ficha[0]) }}" enctype="multipart/form-data">
+        <label>Agregar más fotos</label>
+        <input type="file" name="fotos[]" accept="image/*" multiple>
+
+        <br><br>
+
+        <button class="btn" type="submit">Subir fotos</button>
+    </form>
+</div>
+
+<br>
+
+<a class="btn btn-secondary" href="{{ url_for('reparacion.detalle_reparacion', id=ficha[11]) }}">
+    Ver reparación
+</a>
+
+<a class="btn btn-secondary" href="{{ url_for('ficha_tecnica.listar_fichas') }}">
+    Volver al listado
+</a>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Marketing{% endblock %}
+{% block page_title %}Dashboard Marketing{% endblock %}
+
+{% block content %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Sueldo básico</h3>
+        <p>${{ "%.2f"|format(datos.sueldo_usd) }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Bono por objetivos cumplidos</h3>
+        <p>${{ "%.2f"|format(datos.bonus_ganado) }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total del mes</h3>
+        <p>${{ "%.2f"|format(datos.total_mes) }}</p>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Mis objetivos de este mes</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Objetivo</th>
+                <th>Bono</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in datos.objetivos %}
+            <tr>
+                <td>
+                    {{ o[1] }}
+                    {% if o[2] %}<br><span style="color: var(--text-secondary); font-size: 13px;">{{ o[2] }}</span>{% endif %}
+                </td>
+                <td>${{ o[3] }}</td>
+                <td>
+                    {% if o[4] == "cumplido" %}
+                        <span class="badge badge-success">Cumplido</span>
+                    {% else %}
+                        <span class="badge badge-warning">Pendiente</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.objetivos|length == 0 %}
+        <div class="empty-state">Todavía no tenés objetivos cargados este mes.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

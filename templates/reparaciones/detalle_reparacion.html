@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle reparación{% endblock %}
+{% block page_title %}Detalle de reparación{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+    <h2>Datos del cliente</h2>
+    <p><strong>Cliente:</strong> {{ reparacion[1] }} {{ reparacion[2] }}</p>
+    <p><strong>DNI:</strong> {{ reparacion[3] }}</p>
+    <p><strong>Teléfono:</strong> {{ reparacion[4] }}</p>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Datos del equipo</h2>
+    <p><strong>Marca:</strong> {{ reparacion[5] }}</p>
+    <p><strong>Modelo:</strong> {{ reparacion[6] }}</p>
+    <p><strong>N° Serie / IMEI:</strong> {{ reparacion[7] }}</p>
+    <p><strong>Estado inicial:</strong> {{ reparacion[8] }}</p>
+    <p><strong>Falla declarada:</strong> {{ reparacion[9] }}</p>
+    <p><strong>Estado actual:</strong> {{ reparacion[12] }}</p>
+    <p><strong>Fecha ingreso:</strong> {{ reparacion[13] }}</p>
+    <p><strong>Fecha entrega:</strong> {{ reparacion[14] or "No entregado" }}</p>
+    <p><strong>Técnico:</strong> {{ reparacion[15] or "Sin" }} {{ reparacion[16] or "asignar" }}</p>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Estado de firma</h2>
+
+    {% if reparacion[17] == "firmado" %}
+        <p><strong>Estado:</strong> Firmado</p>
+        <p><strong>Fecha firma:</strong> {{ reparacion[18] }}</p>
+
+        {% if reparacion[19] %}
+            <p><strong>Firma del cliente:</strong></p>
+            <a href="{{ url_for('static', filename=reparacion[19]) }}" target="_blank">
+                <img src="{{ url_for('static', filename=reparacion[19]) }}"
+                     alt="Firma cliente"
+                     style="width:250px; border-radius:10px; border:1px solid #ccc;">
+            </a>
+        {% endif %}
+    {% else %}
+        <p><strong>Estado:</strong> Pendiente de firma</p>
+
+        <a class="btn" href="{{ url_for('firma.solicitar_firma_reparacion', equipo_id=reparacion[0]) }}">
+            Solicitar firma al cliente
+        </a>
+
+        {% if reparacion[20] %}
+            <br><br>
+            <a class="btn btn-secondary"
+               href="{{ url_for('firma.firmar_documento', token=reparacion[20]) }}"
+               target="_blank">
+                Abrir enlace de firma
+            </a>
+        {% endif %}
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Fotos antes (ingreso del equipo)</h2>
+    <br>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        {% for f in fotos_antes %}
+            <a href="{{ url_for('static', filename=f[1]) }}" target="_blank">
+                <img src="{{ url_for('static', filename=f[1]) }}"
+                     alt="Foto antes"
+                     style="width:200px; border-radius:10px; border:1px solid #ccc; cursor:pointer;">
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if fotos_antes|length == 0 %}
+        <div class="empty-state">Todavía no hay fotos de antes.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Fotos después (equipo terminado)</h2>
+    <br>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        {% for f in fotos_despues %}
+            <a href="{{ url_for('static', filename=f[1]) }}" target="_blank">
+                <img src="{{ url_for('static', filename=f[1]) }}"
+                     alt="Foto después"
+                     style="width:200px; border-radius:10px; border:1px solid #ccc; cursor:pointer;">
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if fotos_despues|length == 0 %}
+        <div class="empty-state">Todavía no hay fotos de después. Se cargan al hacer la nota técnica o al editar la reparación.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Notas técnicas de esta reparación</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Diagnóstico</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in notas_tecnicas %}
+            <tr>
+                <td>{{ n[1] }}</td>
+                <td>{{ (n[2] or "")[:80] }}{% if n[2] and n[2]|length > 80 %}...{% endif %}</td>
+                <td>
+                    <a class="btn btn-secondary" href="{{ url_for('ficha_tecnica.detalle_ficha', id=n[0]) }}">Ver</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if notas_tecnicas|length == 0 %}
+        <div class="empty-state">Todavía no se cargó ninguna nota técnica para esta reparación.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Mano de obra aplicada</h2>
+
+    <form method="POST" action="{{ url_for('reparacion.agregar_mano_obra', id=reparacion[0]) }}">
+        <div class="form-grid">
+            <div>
+                <label>Trabajo</label>
+                <select name="mano_obra_id" required>
+                    {% for m in mano_obra %}
+                        <option value="{{ m[0] }}">
+                            {{ m[1] }} - ${{ m[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Precio aplicado (USD)</label>
+                <input type="number" step="0.01" name="precio_aplicado" required>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit">Agregar mano de obra</button>
+    </form>
+
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Trabajo</th>
+                <th>Descripción</th>
+                <th>Precio aplicado (USD)</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for m in mano_obra_aplicada %}
+            <tr>
+                <td>{{ m[1] }}</td>
+                <td>{{ m[2] }}</td>
+                <td>${{ m[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if mano_obra_aplicada|length == 0 %}
+        <div class="empty-state">
+            Todavía no se cargó mano de obra para esta reparación.
+        </div>
+    {% endif %}
+
+    <br>
+
+    <h3>Total mano de obra: ${{ total_mano_obra }}</h3>
+</div>
+
+<br>
+
+<a class="btn" href="{{ url_for('factura.crear_factura_reparacion', equipo_id=reparacion[0]) }}">
+    Facturar reparación
+</a>
+
+<a class="btn" href="{{ url_for('ficha_tecnica.crear_ficha', equipo_id=reparacion[0]) }}">
+    Nueva nota técnica
+</a>
+
+<a class="btn" href="{{ url_for('reparacion.editar_reparacion', id=reparacion[0]) }}">
+    Editar
+</a>
+
+<a class="btn btn-secondary" href="{{ url_for('reparacion.listar_reparaciones') }}">
+    Volver
+</a>
+
+{% endblock %}

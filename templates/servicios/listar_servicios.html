@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Servicios{% endblock %}
+{% block page_title %}Servicios (luz, agua, gas, alquiler, etc.){% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('servicio.crear_servicio') }}">Cargar servicio</a>
+
+<br><br>
+
+<div class="panel">
+    <h2>Pendientes de pago</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Monto</th>
+                <th>Vence</th>
+                <th>Observación</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in pendientes %}
+            <tr>
+                <td>
+                    {{ s.nombre }}
+                    {% if s.es_recurrente %}
+                        <span class="badge badge-success">Recurrente</span>
+                    {% endif %}
+                </td>
+                <td>{% if s.monto %}${{ s.monto }}{% else %}—{% endif %}</td>
+                <td>
+                    {{ s.fecha_vencimiento }}
+                    {% if s.vencido %}
+                        <span class="badge badge-danger">Vencido</span>
+                    {% elif s.por_vencer %}
+                        <span class="badge badge-warning">Por vencer</span>
+                    {% endif %}
+                </td>
+                <td>{{ s.observacion }}</td>
+                <td>
+                    <a class="btn btn-secondary" href="{{ url_for('servicio.editar_servicio', id=s.id) }}">Editar</a>
+                    <a class="btn" href="{{ url_for('servicio.marcar_pagado', id=s.id) }}">Marcar pagado</a>
+                    <a class="btn btn-secondary" href="{{ url_for('servicio.eliminar_servicio', id=s.id) }}"
+                       onclick="return confirm('¿Eliminar este servicio?');">Eliminar</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if pendientes|length == 0 %}
+        <div class="empty-state">No hay servicios pendientes de pago.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Historial de pagos</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Monto</th>
+                <th>Venció</th>
+                <th>Pagado el</th>
+                <th>Comprobante</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in pagados %}
+            <tr>
+                <td>{{ s[1] }}</td>
+                <td>{% if s[2] %}${{ s[2] }}{% else %}—{% endif %}</td>
+                <td>{{ s[3] }}</td>
+                <td>{{ s[5] }}</td>
+                <td>
+                    {% if s[6] %}
+                        <a href="{{ url_for('static', filename=s[6]) }}" target="_blank">Ver</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if pagados|length == 0 %}
+        <div class="empty-state">Todavía no hay servicios pagados registrados.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

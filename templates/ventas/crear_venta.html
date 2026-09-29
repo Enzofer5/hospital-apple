@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Venta{% endblock %}
+{% block page_title %}Registrar Venta{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+
+<form method="POST" id="formVenta" enctype="multipart/form-data">
+
+    <div class="form-grid">
+
+        <div>
+            <label>Cliente</label>
+            <select name="cliente_id" required>
+                {% for c in clientes %}
+                    <option value="{{ c[0] }}">
+                        {{ c[2] }}, {{ c[1] }} - DNI {{ c[3] }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Sucursal</label>
+            <select name="sucursal_id" required>
+                {% for s in sucursales %}
+                    <option value="{{ s[0] }}">{{ s[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Vendedor</label>
+            <select name="vendedor_id">
+                {% for v in vendedores %}
+                    <option value="{{ v[0] }}">{{ v[1] }} {{ v[2] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Cotización dólar (solo si el cliente paga algo en pesos)</label>
+            <input type="number" step="0.01" min="0" name="cotizacion_dolar" value="0">
+        </div>
+
+        <div>
+            <label>Descuento</label>
+            <input type="number" step="0.01" min="0" name="descuento" value="0">
+        </div>
+
+    </div>
+
+    <br>
+
+    <h3>Productos de la venta</h3>
+
+    <div id="productosContainer">
+        <div class="producto-item" style="border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;">
+            <div class="form-grid">
+                <div>
+                    <label>Producto</label>
+                    <select name="producto_id[]" required>
+                        {% for p in productos %}
+                            <option value="{{ p[0] }}">
+                                {{ p[1] }} {{ p[2] }} | USD {{ p[5] }} | Stock: {{ p[4] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label>Cantidad</label>
+                    <input type="number" name="cantidad[]" min="1" value="1" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-secondary" type="button" onclick="agregarProducto()">
+        + Agregar otro producto
+    </button>
+
+    <br><br>
+
+    <div class="panel">
+        <h3>Plan Canje</h3>
+
+        <label>
+            <input type="checkbox" name="usa_plan_canje" id="usa_plan_canje" value="1" onchange="mostrarPlanCanje()">
+            Esta venta incluye Plan Canje
+        </label>
+
+        <div id="planCanjeBox" style="display:none; margin-top:20px;">
+            <div class="form-grid">
+
+                <div>
+                    <label>Marca del equipo entregado</label>
+                    <input type="text" name="marca_entrega">
+                </div>
+
+                <div>
+                    <label>Modelo del equipo entregado</label>
+                    <input type="text" name="modelo_entrega">
+                </div>
+
+                <div>
+                    <label>N° Serie / IMEI entregado</label>
+                    <input type="text" name="nro_serie_entrega">
+                </div>
+
+                <div>
+                    <label>Valor tomado</label>
+                    <input type="number" step="0.01" min="0" name="valor_tomado" value="0">
+                </div>
+
+                <div>
+                    <label>Importe que abona el cliente</label>
+                    <input type="number" step="0.01" min="0" name="importe_abona_cliente" value="0">
+                </div>
+
+                <div>
+                    <label>Foto del equipo entregado</label>
+                    <input type="file" name="foto_equipo" accept="image/*">
+                </div>
+
+            </div>
+
+            <br>
+
+            <label>Estado del equipo entregado</label>
+            <textarea name="estado_equipo" rows="4"></textarea>
+        </div>
+    </div>
+
+    <br>
+
+    <h3>Pagos</h3>
+
+    <div id="pagosContainer">
+        <div class="pago-item" style="border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;">
+            <div class="form-grid">
+                <div>
+                    <label>Medio de cobro</label>
+                    <select name="medio_cobro_id[]" required>
+                        {% for m in medios_cobro %}
+                            <option value="{{ m[0] }}">{{ m[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label>Moneda del pago</label>
+                    <select name="moneda_pago[]" required>
+                        <option value="ARS">Pesos ARS</option>
+                        <option value="USD">Dólares USD</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Monto</label>
+                    <input type="number" step="0.01" min="0.01" name="monto_pago[]" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-secondary" type="button" onclick="agregarPago()">
+        + Agregar otro pago
+    </button>
+
+    <br><br>
+
+    <button class="btn" type="submit">
+        Registrar venta
+    </button>
+
+    <a class="btn btn-secondary" href="{{ url_for('venta.listar_ventas') }}">
+        Volver
+    </a>
+
+</form>
+
+</div>
+
+<script>
+function mostrarPlanCanje() {
+    const check = document.getElementById("usa_plan_canje");
+    const box = document.getElementById("planCanjeBox");
+    box.style.display = check.checked ? "block" : "none";
+}
+
+function agregarProducto() {
+    const container = document.getElementById("productosContainer");
+
+    const item = document.createElement("div");
+    item.className = "producto-item";
+    item.style = "border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;";
+
+    item.innerHTML = `
+        <div class="form-grid">
+            <div>
+                <label>Producto</label>
+                <select name="producto_id[]" required>
+                    {% for p in productos %}
+                        <option value="{{ p[0] }}">
+                            {{ p[1] }} {{ p[2] }} | USD {{ p[5] }} | Stock: {{ p[4] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Cantidad</label>
+                <input type="number" name="cantidad[]" min="1" value="1" required>
+            </div>
+
+            <div>
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-danger" onclick="this.closest('.producto-item').remove()">
+                    Quitar
+                </button>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(item);
+}
+
+function agregarPago() {
+    const container = document.getElementById("pagosContainer");
+
+    const item = document.createElement("div");
+    item.className = "pago-item";
+    item.style = "border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;";
+
+    item.innerHTML = `
+        <div class="form-grid">
+            <div>
+                <label>Medio de cobro</label>
+                <select name="medio_cobro_id[]" required>
+                    {% for m in medios_cobro %}
+                        <option value="{{ m[0] }}">{{ m[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Moneda del pago</label>
+                <select name="moneda_pago[]" required>
+                    <option value="ARS">Pesos ARS</option>
+                    <option value="USD">Dólares USD</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Monto</label>
+                <input type="number" step="0.01" min="0.01" name="monto_pago[]" required>
+            </div>
+
+            <div>
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-danger" onclick="this.closest('.pago-item').remove()">
+                    Quitar
+                </button>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(item);
+}
+</script>
+
+{% endblock %}

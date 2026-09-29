@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Proveedores{% endblock %}
+{% block page_title %}Gestión de proveedores{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('proveedor.crear_proveedor') }}">Nuevo proveedor</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Nombre</label>
+                <input type="text" name="nombre" value="{{ filtros.nombre }}">
+            </div>
+
+            <div>
+                <label>CUIT</label>
+                <input type="text" name="cuit" value="{{ filtros.cuit }}">
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="{{ filtros.telefono }}">
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="1" {% if filtros.estado == "1" %}selected{% endif %}>Activos</option>
+                    <option value="0" {% if filtros.estado == "0" %}selected{% endif %}>Inactivos</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">
+        Usá los filtros para buscar proveedores.
+    </div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Proveedor</th>
+            <th>CUIT</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for p in proveedores %}
+        <tr>
+            <td>{{ p[1] }}</td>
+            <td>{{ p[2] }}</td>
+            <td>{{ p[3] }}</td>
+            <td>{{ p[4] }}</td>
+            <td>{{ p[5] }}</td>
+            <td>
+                {% if p[6] == 1 %}
+                    Activo
+                {% else %}
+                    Inactivo
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('proveedor.editar_proveedor', id=p[0]) }}">Editar</a>
+                |
+                <a href="{{ url_for('proveedor.eliminar_proveedor', id=p[0]) }}"
+                   onclick="return confirm('¿Seguro que querés dar de baja este proveedor?')">
+                    Dar de baja
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if proveedores|length == 0 %}
+    <div class="empty-state">
+        No se encontraron proveedores con esos filtros.
+    </div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración{% endblock %}
+{% block page_title %}Configuración{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <h2>Logo de la empresa</h2>
+    <br>
+    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+        Este logo va a aparecer en el menú lateral en lugar del logo por defecto.
+        Usá una imagen cuadrada para que se vea mejor (PNG, JPG o WEBP).
+    </p>
+
+    {% if empresa_logo %}
+        <img src="{{ url_for('static', filename=empresa_logo) }}" alt="Logo actual"
+             style="width:72px; height:72px; object-fit:contain; border-radius:8px; border:1px solid var(--border-light); margin-bottom:16px; display:block;">
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="formulario" value="logo">
+
+        <label>Archivo de logo</label>
+        <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp" required>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar logo</button>
+    </form>
+</div>
+
+<br>
+
+<div class="form-box">
+    <h2>Meta mensual del negocio</h2>
+    <br>
+    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+        Este monto es la facturación total que tiene que superar el negocio en el mes
+        para que roles como Atención al público cobren su comisión de venta.
+    </p>
+
+    <form method="POST">
+        <input type="hidden" name="formulario" value="meta">
+
+        <label>Meta mensual (facturación total del negocio)</label>
+        <input type="number" step="0.01" name="meta_mensual_negocio" value="{{ meta_mensual_negocio }}">
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar</button>
+    </form>
+</div>
+
+<br>
+
+<div class="form-box">
+    <h2>Email de la empresa</h2>
+    <br>
+    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+        Todos los mails que se envían a los clientes (solicitudes de firma, etc.)
+        salen desde esta casilla. Si usás Gmail, la contraseña tiene que ser una
+        "contraseña de aplicación" (no la contraseña normal de la cuenta).
+
+        {% if tiene_password_app %}
+            <br><br><strong>Estado actual: casilla configurada correctamente.</strong>
+        {% else %}
+            <br><br><strong style="color:#b45309;">Todavía no cargaste la contraseña de aplicación. Los mails no se van a poder enviar hasta que la cargues.</strong>
+        {% endif %}
+    </p>
+
+    <form method="POST">
+        <input type="hidden" name="formulario" value="email">
+
+        <label>Email de la empresa</label>
+        <input type="email" name="empresa_email" value="{{ empresa_email }}" required>
+
+        <br><br>
+
+        <label>Contraseña de aplicación</label>
+        <input type="password" name="email_password_app" placeholder="{% if tiene_password_app %}Dejar vacío para no cambiarla{% else %}Ej: xxxx xxxx xxxx xxxx{% endif %}">
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Productos{% endblock %}
+{% block page_title %}Gestión de productos{% endblock %}
+
+{% block content %}
+
+{% if session.rol in ["Dueño", "Socio"] %}
+    <a class="btn" href="{{ url_for('producto.crear_producto') }}">Nuevo producto</a>
+{% endif %}
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" value="{{ filtros.marca }}">
+            </div>
+
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" value="{{ filtros.modelo }}">
+            </div>
+
+            <div>
+                <label>Categoría</label>
+                <select name="categoria_id">
+                    <option value="">Todas</option>
+                    {% for c in categorias %}
+                        <option value="{{ c[0] }}" {% if filtros.categoria_id == c[0]|string %}selected{% endif %}>
+                            {{ c[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Proveedor</label>
+                <select name="proveedor_id">
+                    <option value="">Todos</option>
+                    {% for p in proveedores %}
+                        <option value="{{ p[0] }}" {% if filtros.proveedor_id == p[0]|string %}selected{% endif %}>
+                            {{ p[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="1" {% if filtros.estado == "1" %}selected{% endif %}>Activos</option>
+                    <option value="0" {% if filtros.estado == "0" %}selected{% endif %}>Inactivos</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">
+        Usá los filtros para buscar productos.
+    </div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Foto</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Proveedor</th>
+            <th>Costo (USD)</th>
+            <th>Venta (USD)</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for p in productos %}
+        <tr>
+            <td>
+                {% if p[6] %}
+                    <a href="{{ url_for('static', filename=p[6]) }}" target="_blank">
+                        <img src="{{ url_for('static', filename=p[6]) }}"
+                             width="60"
+                             style="border-radius:8px; cursor:pointer;"
+                             title="Click para ampliar">
+                    </a>
+                {% else %}
+                    Sin foto
+                {% endif %}
+            </td>
+
+            <td>
+                <strong>{{ p[1] }} {{ p[2] }}</strong><br>
+                {{ p[3] }}
+            </td>
+
+            <td>{{ p[8] or "Sin categoría" }}</td>
+            <td>{{ p[9] or "Sin proveedor" }}</td>
+            <td>USD {{ p[4] }}</td>
+            <td>USD {{ p[5] }}</td>
+
+            <td>
+                {% if p[7] == 1 %}
+                    Activo
+                {% else %}
+                    Inactivo
+                {% endif %}
+            </td>
+
+            <td>
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('producto.editar_producto', id=p[0]) }}">Editar</a>
+                    |
+                    <a href="{{ url_for('producto.eliminar_producto', id=p[0]) }}"
+                       onclick="return confirm('¿Seguro que querés dar de baja este producto?')">
+                        Dar de baja
+                    </a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if productos|length == 0 %}
+    <div class="empty-state">
+        No se encontraron productos con esos filtros.
+    </div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

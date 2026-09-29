@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Editar reparación{% endblock %}
+{% block page_title %}Editar reparación{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div>
+                <label>Equipo</label>
+                <input type="text" value="{{ reparacion[2] }} {{ reparacion[3] }}" disabled>
+            </div>
+
+            <div>
+                <label>N° Serie</label>
+                <input type="text" value="{{ reparacion[4] }}" disabled>
+            </div>
+
+            <div>
+                <label>Técnico</label>
+                <select name="tecnico_id">
+                    <option value="">Sin asignar</option>
+                    {% for t in tecnicos %}
+                        <option value="{{ t[0] }}" {% if reparacion[1] == t[0] %}selected{% endif %}>
+                            {{ t[1] }} {{ t[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado" required>
+                    <option value="pendiente" {% if reparacion[9] == "pendiente" %}selected{% endif %}>Pendiente</option>
+                    <option value="realizado" {% if reparacion[9] == "realizado" %}selected{% endif %}>Realizado</option>
+                    <option value="para_entregar" {% if reparacion[9] == "para_entregar" %}selected{% endif %}>Para entregar</option>
+                    <option value="entregado" {% if reparacion[9] == "entregado" %}selected{% endif %}>Entregado</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Agregar fotos después (podés elegir varias)</label>
+                <input type="file" name="fotos_despues[]" accept="image/*" multiple>
+            </div>
+        </div>
+
+        <br>
+
+        {% if fotos_antes|length > 0 %}
+            <p><strong>Fotos antes:</strong></p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+                {% for f in fotos_antes %}
+                    <a href="{{ url_for('static', filename=f[0]) }}" target="_blank">
+                        <img src="{{ url_for('static', filename=f[0]) }}" width="120" style="border-radius:8px;">
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if fotos_despues|length > 0 %}
+            <p><strong>Fotos después actuales:</strong></p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+                {% for f in fotos_despues %}
+                    <a href="{{ url_for('static', filename=f[0]) }}" target="_blank">
+                        <img src="{{ url_for('static', filename=f[0]) }}" width="120" style="border-radius:8px;">
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <label>Estado del equipo</label>
+        <textarea name="descripcion_estado" rows="4">{{ reparacion[5] }}</textarea>
+
+        <br><br>
+
+        <label>Falla / notas</label>
+        <textarea name="falla_declarada" rows="4">{{ reparacion[6] }}</textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Actualizar reparación</button>
+        <a class="btn btn-secondary" href="{{ url_for('reparacion.listar_reparaciones') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

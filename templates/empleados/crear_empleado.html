@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Crear empleado{% endblock %}
+{% block page_title %}Crear empleado{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Nombre</label>
+                <input type="text" name="nombre" required>
+            </div>
+
+            <div>
+                <label>Apellido</label>
+                <input type="text" name="apellido" required>
+            </div>
+
+            <div>
+                <label>DNI</label>
+                <input type="text" name="dni">
+            </div>
+
+            <div>
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" name="telefono">
+            </div>
+
+            <div>
+                <label>Contraseña</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <div>
+                <label>Rol</label>
+                <select name="rol_id" required>
+                    {% for rol in roles %}
+                        <option value="{{ rol[0] }}">{{ rol[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id" required>
+                    {% for sucursal in sucursales %}
+                        <option value="{{ sucursal[0] }}">{{ sucursal[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sueldo (USD)</label>
+                <input type="number" step="0.01" name="sueldo" value="0">
+            </div>
+
+            <div>
+                <label>Porcentaje comisión</label>
+                <input type="number" step="0.01" name="porcentaje_comision" value="0">
+            </div>
+        </div>
+
+        <br>
+
+        <label>
+            <input type="checkbox" name="modo_estudiante" value="1" style="width:auto; display:inline-block; margin-right:8px;">
+            Modo estudiante (técnico)
+        </label>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar</button>
+        <a class="btn btn-secondary" href="{{ url_for('empleado.listar_empleados') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

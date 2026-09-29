@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Recordatorios{% endblock %}
+{% block page_title %}Recordatorios pendientes{% endblock %}
+
+{% block content %}
+
+<a class="btn btn-secondary" href="{{ url_for('turno.listar_turnos') }}">Volver a agenda</a>
+
+<br><br>
+
+{% if turnos|length == 0 %}
+    <div class="empty-state">
+        No hay recordatorios pendientes por enviar.
+    </div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha turno</th>
+            <th>Cliente</th>
+            <th>Contacto</th>
+            <th>Técnico</th>
+            <th>Estado</th>
+            <th>Observación</th>
+            <th>Recordatorio</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for t in turnos %}
+        <tr>
+            <td>{{ t.fecha_turno }}</td>
+            <td>{{ t.cliente }}</td>
+            <td>
+                Tel: {{ t.telefono }}<br>
+                Email: {{ t.email }}
+            </td>
+            <td>{{ t.tecnico }}</td>
+            <td>{{ t.estado }}</td>
+            <td>{{ t.observacion }}</td>
+            <td>
+                {% if t.recordatorio_1_dia == 0 %}
+                    <div style="margin-bottom:6px;">
+                        {% if t.wa_link_1_dia %}
+                            <a class="btn" href="{{ t.wa_link_1_dia }}" target="_blank">
+                                Enviar recordatorio 24hs por WhatsApp
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-secondary" href="{{ url_for('turno.marcar_recordatorio', id=t.id, tipo='1_dia') }}">
+                            Marcar aviso 1 día como enviado
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if t.recordatorio_2_horas == 0 %}
+                    <div>
+                        {% if t.wa_link_2_horas %}
+                            <a class="btn" href="{{ t.wa_link_2_horas }}" target="_blank">
+                                Confirmar asistencia por WhatsApp
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-secondary" href="{{ url_for('turno.marcar_recordatorio', id=t.id, tipo='2_horas') }}">
+                            Marcar aviso 2 hs como enviado
+                        </a>
+                    </div>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}

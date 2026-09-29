@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Caja{% endblock %}
+{% block page_title %}Dashboard de Caja{% endblock %}
+
+{% block content %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Ventas del mes</h3>
+        <p>${{ datos.ventas_mes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Facturación del mes</h3>
+        <p>${{ datos.facturacion }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Mano de obra total</h3>
+        <p>${{ datos.mano_obra }}</p>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Accesos rápidos</h2>
+    <br>
+
+    <div class="actions">
+        <a class="btn" href="{{ url_for('venta.crear_venta') }}">Nueva venta</a>
+        <a class="btn" href="{{ url_for('venta.listar_ventas') }}">Ver ventas</a>
+        <a class="btn" href="{{ url_for('factura.listar_facturas') }}">Facturas</a>
+        <a class="btn" href="{{ url_for('cliente.listar_clientes') }}">Clientes</a>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Últimas ventas</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for v in datos.ultimas_ventas %}
+            <tr>
+                <td>{{ v[0] }} {{ v[1] }}</td>
+                <td>${{ v[2] }}</td>
+                <td>{{ v[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ultimas_ventas|length == 0 %}
+        <div class="empty-state">Todavía no hay ventas registradas.</div>
+    {% endif %}
+</div>
+
+{% endblock %}
