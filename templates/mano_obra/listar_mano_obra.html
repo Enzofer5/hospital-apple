@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Mano de obra{% endblock %}
+{% block page_title %}Listado de mano de obra{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('mano_obra.crear_mano_obra') }}">Nueva mano de obra</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Nombre del trabajo</label>
+                <input type="text" name="nombre" value="{{ filtros.nombre }}">
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="1" {% if filtros.estado == "1" %}selected{% endif %}>Activos</option>
+                    <option value="0" {% if filtros.estado == "0" %}selected{% endif %}>Inactivos</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar mano de obra.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Trabajo</th>
+            <th>Descripción</th>
+            <th>Precio (USD)</th>
+            <th>Tiempo estimado</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for t in trabajos %}
+        <tr>
+            <td>{{ t[1] }}</td>
+            <td>{{ t[2] }}</td>
+            <td>${{ t[3] }}</td>
+            <td>{{ t[4] }}</td>
+            <td>
+                {% if t[5] == 1 %}
+                    Activo
+                {% else %}
+                    Inactivo
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('mano_obra.editar_mano_obra', id=t[0]) }}">Editar</a>
+                |
+                <a href="{{ url_for('mano_obra.eliminar_mano_obra', id=t[0]) }}"
+                   onclick="return confirm('¿Seguro que querés dar de baja esta mano de obra?')">
+                    Dar de baja
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if trabajos|length == 0 %}
+    <div class="empty-state">No se encontraron trabajos con esos filtros.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

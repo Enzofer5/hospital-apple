@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Crear cliente{% endblock %}
+{% block page_title %}Crear cliente{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Nombre</label>
+                <input type="text" name="nombre" required>
+            </div>
+
+            <div>
+                <label>Apellido</label>
+                <input type="text" name="apellido" required>
+            </div>
+
+            <div>
+                <label>DNI</label>
+                <input type="text" name="dni">
+            </div>
+
+            <div>
+                <label>Email</label>
+                <input type="email" name="email">
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" name="telefono">
+            </div>
+
+            <div>
+                <label>Fecha de nacimiento</label>
+                <input type="date" name="fecha_nacimiento">
+            </div>
+
+            <div>
+                <label>Dirección</label>
+                <input type="text" name="direccion">
+            </div>
+
+            <div>
+                <label>Localidad</label>
+                <input type="text" name="localidad">
+            </div>
+        </div>
+
+        <br>
+
+        <label>Observaciones</label>
+        <textarea name="observaciones" rows="4"></textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar cliente</button>
+        <a class="btn btn-secondary" href="{{ url_for('cliente.listar_clientes') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

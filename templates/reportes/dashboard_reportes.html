@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes{% endblock %}
+{% block page_title %}Reportes y estadísticas{% endblock %}
+
+{% block content %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Ventas del mes</h3>
+        <p>${{ ventas_mes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Cantidad de ventas</h3>
+        <p>{{ cantidad_ventas_mes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Clientes activos</h3>
+        <p>{{ clientes_activos }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Reparaciones pendientes</h3>
+        <p>{{ reparaciones_pendientes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Mano de obra del mes</h3>
+        <p>${{ mano_obra_mes }}</p>
+    </div>
+</div>
+
+<div class="panel">
+    <h2>Reparaciones por técnico</h2>
+
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Técnico</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in reparaciones_por_tecnico %}
+            <tr>
+                <td>{{ r[0] or "Sin" }} {{ r[1] or "asignar" }}</td>
+                <td>{{ r[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if reparaciones_por_tecnico|length == 0 %}
+        <div class="empty-state">No hay reparaciones registradas.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Productos más vendidos</h2>
+
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad vendida</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in productos_mas_vendidos %}
+            <tr>
+                <td>{{ p[0] }} {{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if productos_mas_vendidos|length == 0 %}
+        <div class="empty-state">No hay ventas registradas.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Stock bajo</h2>
+
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Sucursal</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for s in stock_bajo %}
+            <tr>
+                <td>{{ s[0] }} {{ s[1] }}</td>
+                <td>{{ s[2] }}</td>
+                <td>{{ s[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if stock_bajo|length == 0 %}
+        <div class="empty-state">No hay productos con stock bajo.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

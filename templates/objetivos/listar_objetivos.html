@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Objetivos{% endblock %}
+{% block page_title %}Objetivos{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('objetivo.crear_objetivo') }}">Nuevo objetivo</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Empleado</label>
+                <select name="usuario_id">
+                    <option value="">Todos</option>
+                    {% for e in empleados %}
+                        <option value="{{ e[0] }}" {% if filtros.usuario_id == e[0]|string %}selected{% endif %}>
+                            {{ e[1] }} {{ e[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sector / rol</label>
+                <select name="rol_id">
+                    <option value="">Todos</option>
+                    {% for r in roles %}
+                        <option value="{{ r[0] }}" {% if filtros.rol_id == r[0]|string %}selected{% endif %}>
+                            {{ r[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Mes</label>
+                <input type="number" min="1" max="12" name="mes" value="{{ filtros.mes }}">
+            </div>
+
+            <div>
+                <label>Año</label>
+                <input type="number" name="anio" value="{{ filtros.anio }}">
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit">Filtrar</button>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Para</th>
+            <th>Bono</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for o in objetivos %}
+        <tr>
+            <td>
+                {{ o[1] }}
+                {% if o[2] %}<br><span style="color: var(--text-secondary); font-size: 13px;">{{ o[2] }}</span>{% endif %}
+            </td>
+            <td>
+                {% if o[7] %}
+                    {{ o[7] }} {{ o[8] }}
+                {% else %}
+                    Sector: {{ o[9] }}
+                {% endif %}
+            </td>
+            <td>${{ o[3] }}</td>
+            <td>
+                {% if o[4] == "cumplido" %}
+                    <span class="badge badge-success">Cumplido</span>
+                {% else %}
+                    <span class="badge badge-warning">Pendiente</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if o[4] == "cumplido" %}
+                    <a class="btn btn-secondary" href="{{ url_for('objetivo.marcar_objetivo', id=o[0], estado='pendiente') }}">
+                        Marcar pendiente
+                    </a>
+                {% else %}
+                    <a class="btn" href="{{ url_for('objetivo.marcar_objetivo', id=o[0], estado='cumplido') }}">
+                        Marcar cumplido
+                    </a>
+                {% endif %}
+
+                <a class="btn btn-danger"
+                   href="{{ url_for('objetivo.eliminar_objetivo', id=o[0]) }}"
+                   onclick="return confirm('¿Eliminar este objetivo?')">
+                    Eliminar
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if objetivos|length == 0 %}
+    <div class="empty-state">No hay objetivos cargados para ese período.</div>
+{% endif %}
+
+{% endblock %}

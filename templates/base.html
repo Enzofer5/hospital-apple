@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Sistema de Gestión{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                {% if empresa_actual and empresa_actual.logo %}
+                    <img src="{{ url_for('static', filename=empresa_actual.logo) }}" alt="{{ empresa_actual.nombre }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Apple Hospital">
+                {% endif %}
+                <span>{{ empresa_actual.nombre if empresa_actual else "Apple Hospital" }}</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú">
+                <span class="menu-toggle-bars"></span>
+            </button>
+        </div>
+
+        <div class="sidebar-panel" id="sidebarPanel">
+            <nav>
+                <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('empleado.listar_empleados') }}">Empleados</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Recepcionista", "Vendedor"] %}
+                    <a href="{{ url_for('cliente.listar_clientes') }}">Clientes</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('proveedor.listar_proveedores') }}">Proveedores</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Vendedor", "Recepcionista"] %}
+                    <a href="{{ url_for('producto.listar_productos') }}">Productos</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Vendedor", "Recepcionista"] %}
+                    <a href="{{ url_for('stock.listar_stock') }}">Stock</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Vendedor", "Atención al público", "Cajero"] %}
+                    <a href="{{ url_for('venta.listar_ventas') }}">Ventas</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Recepcionista", "Tecnico"] %}
+                    <a href="{{ url_for('reparacion.listar_reparaciones') }}">Reparaciones</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Tecnico"] %}
+                    <a href="{{ url_for('mano_obra.listar_mano_obra') }}">Mano de obra</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Recepcionista", "Tecnico"] %}
+                    <a href="{{ url_for('ficha_tecnica.listar_fichas') }}">Notas técnicas</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('objetivo.listar_objetivos') }}">Objetivos</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('ayuda_economica.listar_ayudas') }}">Ayudas económicas</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Administracion"] %}
+                    <a href="{{ url_for('servicio.listar_servicios') }}">Servicios</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Recepcionista", "Tecnico"] %}
+                    <a href="{{ url_for('turno.calendario_turnos') }}">Agenda</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Recepcionista"] %}
+                    <a href="{{ url_for('turno.recordatorios_turnos') }}">Recordatorios</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('reporte.dashboard_reportes') }}">Reportes</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio", "Cajero"] %}
+                    <a href="{{ url_for('factura.listar_facturas') }}">Facturas</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('compra.listar_compras') }}">Compras</a>
+                {% endif %}
+
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('configuracion.configuracion') }}">Configuración</a>
+                {% endif %}
+            </nav>
+
+            <a class="logout" href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+        </div>
+    </aside>
+
+    <main class="content">
+
+        <header class="topbar">
+            <div class="topbar-row">
+                <div>
+                    <h1>{% block page_title %}Panel principal{% endblock %}</h1>
+                    <p>
+                        Usuario: {{ session.nombre }}
+                        |
+                        Rol: {{ session.rol }}
+                    </p>
+                </div>
+
+                <div class="clock" id="reloj"></div>
+            </div>
+        </header>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="alert alert-{{ categoria }}">
+                        {{ mensaje }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+</div>
+
+<script>
+    const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+    const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
+                   "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+    function actualizarReloj() {
+        const el = document.getElementById("reloj");
+        if (!el) return;
+
+        const ahora = new Date();
+        const hora = String(ahora.getHours()).padStart(2, "0");
+        const min = String(ahora.getMinutes()).padStart(2, "0");
+        const seg = String(ahora.getSeconds()).padStart(2, "0");
+
+        const fecha = `${DIAS[ahora.getDay()]} ${ahora.getDate()} de ${MESES[ahora.getMonth()]}`;
+
+        el.innerHTML = `<span class="clock-time">${hora}:${min}:${seg}</span><span class="clock-date">${fecha}</span>`;
+    }
+
+    actualizarReloj();
+    setInterval(actualizarReloj, 1000);
+
+    const sidebar = document.getElementById("sidebar");
+    const menuToggle = document.getElementById("menuToggle");
+
+    if (menuToggle) {
+        menuToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("open");
+        });
+    }
+
+    document.querySelectorAll("#sidebarPanel nav a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            sidebar.classList.remove("open");
+        });
+
+        if (link.getAttribute("href") === window.location.pathname) {
+            link.classList.add("active");
+        }
+    });
+</script>
+
+</body>
+</html>

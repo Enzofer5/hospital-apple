@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Página no encontrada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <img class="auth-logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Apple Hospital">
+        <div class="auth-logo">Página no encontrada</div>
+        <div class="auth-subtitle">
+            La dirección a la que intentaste entrar no existe o fue movida.
+        </div>
+
+        <a class="btn" style="width:100%; display:flex;" href="/">Volver al inicio</a>
+    </div>
+</div>
+
+</body>
+</html>

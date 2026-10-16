@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Reparaciones{% endblock %}
+{% block page_title %}Gestión de reparaciones{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('reparacion.crear_reparacion') }}">Nueva reparación</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Cliente / DNI</label>
+                <input type="text" name="cliente" value="{{ filtros.cliente }}">
+            </div>
+
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" value="{{ filtros.marca }}">
+            </div>
+
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" value="{{ filtros.modelo }}">
+            </div>
+
+            <div>
+                <label>Técnico</label>
+                <select name="tecnico_id">
+                    <option value="">Todos</option>
+                    {% for t in tecnicos %}
+                        <option value="{{ t[0] }}" {% if filtros.tecnico_id == t[0]|string %}selected{% endif %}>
+                            {{ t[1] }} {{ t[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="pendiente" {% if filtros.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                    <option value="realizado" {% if filtros.estado == "realizado" %}selected{% endif %}>Realizado</option>
+                    <option value="para_entregar" {% if filtros.estado == "para_entregar" %}selected{% endif %}>Para entregar</option>
+                    <option value="entregado" {% if filtros.estado == "entregado" %}selected{% endif %}>Entregado</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar reparaciones.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>Cliente</th>
+            <th>Equipo</th>
+            <th>N° Serie</th>
+            <th>Técnico</th>
+            <th>Estado</th>
+            <th>Ingreso</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for r in reparaciones %}
+        <tr>
+            <td>{{ r[0] }}</td>
+            <td>{{ r[1] }} {{ r[2] }}</td>
+            <td>{{ r[3] }} {{ r[4] }}</td>
+            <td>{{ r[5] }}</td>
+            <td>{{ r[6] or "Sin" }} {{ r[7] or "asignar" }}</td>
+            <td>{{ r[8] }}</td>
+            <td>{{ r[9] }}</td>
+            <td>
+                <a href="{{ url_for('reparacion.detalle_reparacion', id=r[0]) }}">Ver</a>
+                |
+                <a href="{{ url_for('reparacion.editar_reparacion', id=r[0]) }}">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if reparaciones|length == 0 %}
+    <div class="empty-state">No se encontraron reparaciones.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

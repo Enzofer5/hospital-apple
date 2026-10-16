@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Marcar servicio pagado{% endblock %}
+{% block page_title %}Marcar servicio como pagado{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <p><strong>Servicio:</strong> {{ servicio[1] }}</p>
+    <p><strong>Monto:</strong> {% if servicio[2] %}${{ servicio[2] }}{% else %}—{% endif %}</p>
+    <p><strong>Vencimiento:</strong> {{ servicio[3] }}</p>
+
+    <br>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>Foto del comprobante / factura (opcional, pero recomendado para dejarlo archivado)</label>
+        <input type="file" name="foto_factura" accept="image/*,.pdf">
+
+        <br><br>
+
+        <button class="btn" type="submit">Confirmar pago</button>
+        <a class="btn btn-secondary" href="{{ url_for('servicio.listar_servicios') }}">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}

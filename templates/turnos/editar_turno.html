@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Editar turno{% endblock %}
+{% block page_title %}Editar turno{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Cliente</label>
+                <select name="cliente_id" disabled>
+                    {% for c in clientes %}
+                        <option value="{{ c[0] }}" {% if turno[1] == c[0] %}selected{% endif %}>
+                            {{ c[2] }}, {{ c[1] }} - DNI {{ c[3] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Técnico</label>
+                <select name="tecnico_id">
+                    <option value="">Sin asignar</option>
+                    {% for t in tecnicos %}
+                        <option value="{{ t[0] }}" {% if turno[2] == t[0] %}selected{% endif %}>
+                            {{ t[1] }} {{ t[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Equipo en reparación</label>
+                <select name="equipo_id">
+                    <option value="">Sin equipo asociado</option>
+                    {% for e in equipos %}
+                        <option value="{{ e[0] }}" {% if turno[3] == e[0] %}selected{% endif %}>
+                            {{ e[1] }} {{ e[2] }} - {{ e[3] }} {{ e[4] }} - Serie {{ e[5] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Fecha y hora</label>
+                <input type="datetime-local" name="fecha_turno" value="{{ turno[4] }}" required>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado" required>
+                    <option value="pendiente" {% if turno[5] == "pendiente" %}selected{% endif %}>Pendiente</option>
+                    <option value="confirmado" {% if turno[5] == "confirmado" %}selected{% endif %}>Confirmado</option>
+                    <option value="cancelado" {% if turno[5] == "cancelado" %}selected{% endif %}>Cancelado</option>
+                    <option value="asistio" {% if turno[5] == "asistio" %}selected{% endif %}>Asistió</option>
+                    <option value="no_asistio" {% if turno[5] == "no_asistio" %}selected{% endif %}>No asistió</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <label>Observación</label>
+        <textarea name="observacion" rows="4">{{ turno[6] }}</textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Actualizar turno</button>
+        <a class="btn btn-secondary" href="{{ url_for('turno.listar_turnos') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

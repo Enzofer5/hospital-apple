@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Atención al público{% endblock %}
+{% block page_title %}Dashboard Atención al público{% endblock %}
+
+{% block content %}
+
+{% if not datos.meta_configurada %}
+<div class="alert alert-warning">
+    El dueño todavía no configuró la meta mensual del negocio, así que por ahora no corresponde comisión.
+</div>
+{% elif not datos.meta_alcanzada %}
+<div class="alert alert-warning">
+    El negocio todavía no alcanzó la meta mensual (${{ "%.2f"|format(datos.facturacion_total_negocio_mes) }} de ${{ "%.2f"|format(datos.meta_mensual_negocio) }}). La comisión se habilita al superarla.
+</div>
+{% else %}
+<div class="alert alert-success">
+    El negocio superó la meta mensual (${{ "%.2f"|format(datos.facturacion_total_negocio_mes) }} de ${{ "%.2f"|format(datos.meta_mensual_negocio) }}). Tu comisión está habilitada este mes.
+</div>
+{% endif %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Vendido este mes</h3>
+        <p>${{ "%.2f"|format(datos.total_vendido_mes) }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Cantidad de ventas</h3>
+        <p>{{ datos.cantidad_ventas_mes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Sueldo básico</h3>
+        <p>${{ "%.2f"|format(datos.sueldo_usd) }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Comisión ({{ "%.2f"|format(datos.porcentaje_comision) }}%)</h3>
+        <p>${{ "%.2f"|format(datos.comision_mes) }}</p>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Accesos rápidos</h2>
+    <br>
+
+    <div class="actions">
+        <a class="btn" href="{{ url_for('venta.crear_venta') }}">Nueva venta</a>
+        <a class="btn" href="{{ url_for('venta.listar_ventas') }}">Mis ventas</a>
+        <a class="btn" href="{{ url_for('cliente.listar_clientes') }}">Clientes</a>
+        <a class="btn" href="{{ url_for('turno.calendario_turnos') }}">Agenda</a>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Lo que vendí este mes por categoría</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Categoría</th>
+                <th>Unidades</th>
+                <th>Total vendido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in datos.ventas_por_categoria %}
+            <tr>
+                <td>{{ cat[0] }}</td>
+                <td>{{ cat[2] }}</td>
+                <td>${{ "%.2f"|format(cat[1]) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ventas_por_categoria|length == 0 %}
+        <div class="empty-state">Todavía no vendiste nada este mes.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Mis últimas ventas</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Total (USD)</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in datos.ultimas_ventas %}
+            <tr>
+                <td>{{ v[0] }} {{ v[1] }}</td>
+                <td>${{ v[2] }}</td>
+                <td>{{ v[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ultimas_ventas|length == 0 %}
+        <div class="empty-state">Todavía no tenés ventas registradas.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

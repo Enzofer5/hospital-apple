@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Socio{% endblock %}
+{% block page_title %}Dashboard del Socio{% endblock %}
+
+{% block content %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Ventas del mes</h3>
+        <p>${{ datos.ventas_mes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Facturación del mes</h3>
+        <p>${{ datos.facturacion }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Reparaciones pendientes</h3>
+        <p>{{ datos.reparaciones }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Clientes activos</h3>
+        <p>{{ datos.clientes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Productos activos</h3>
+        <p>{{ datos.productos }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Stock bajo</h3>
+        <p>{{ datos.stock_bajo }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Mano de obra total</h3>
+        <p>${{ datos.mano_obra }}</p>
+    </div>
+</div>
+
+<br>
+
+{% if datos.ganancia_bruta_mes is defined %}
+<div class="panel">
+    <h2>Números reales del mes</h2>
+    <br>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Ventas brutas (equipos + accesorios)</h3>
+            <p>${{ "%.2f"|format(datos.ventas_brutas_mes) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Ingresos por reparación</h3>
+            <p>${{ "%.2f"|format(datos.ingresos_reparacion_mes) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Ganancia bruta total</h3>
+            <p>${{ "%.2f"|format(datos.ganancia_bruta_mes) }}</p>
+        </div>
+    </div>
+
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Categoría</th>
+                <th>Unidades vendidas</th>
+                <th>Total vendido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in datos.ventas_por_categoria %}
+            <tr>
+                <td>{{ cat[0] }}</td>
+                <td>{{ cat[2] }}</td>
+                <td>${{ "%.2f"|format(cat[1]) }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>Reparaciones (mano de obra)</td>
+                <td>—</td>
+                <td>${{ "%.2f"|format(datos.mano_obra_mes) }}</td>
+            </tr>
+            <tr>
+                <td>Reparaciones (repuestos)</td>
+                <td>—</td>
+                <td>${{ "%.2f"|format(datos.repuestos_reparacion_mes) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if datos.ventas_por_categoria|length == 0 %}
+        <div class="empty-state">Todavía no hay ventas registradas este mes.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Vendedor del mes</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Vendedor</th>
+                <th>Ventas</th>
+                <th>Total vendido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in datos.ranking_vendedores %}
+            <tr {% if loop.first %}style="font-weight:bold;"{% endif %}>
+                <td>{{ loop.index }}</td>
+                <td>{{ v[1] }} {{ v[2] }}</td>
+                <td>{{ v[4] }}</td>
+                <td>${{ "%.2f"|format(v[3]) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ranking_vendedores|length == 0 %}
+        <div class="empty-state">Todavía no hay ventas registradas este mes.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Técnico del mes</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Técnico</th>
+                <th>Reparaciones</th>
+                <th>Mano de obra generada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in datos.ranking_tecnicos %}
+            <tr {% if loop.first %}style="font-weight:bold;"{% endif %}>
+                <td>{{ loop.index }}</td>
+                <td>{{ t[1] }} {{ t[2] }}</td>
+                <td>{{ t[3] }}</td>
+                <td>${{ "%.2f"|format(t[4]) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ranking_tecnicos|length == 0 %}
+        <div class="empty-state">Todavía no hay reparaciones registradas este mes.</div>
+    {% endif %}
+</div>
+
+<br>
+{% endif %}
+
+<div class="panel">
+    <h2>Accesos rápidos</h2>
+    <br>
+
+    <div class="actions">
+        <a class="btn" href="{{ url_for('empleado.listar_empleados') }}">Empleados</a>
+        <a class="btn" href="{{ url_for('cliente.listar_clientes') }}">Clientes</a>
+        <a class="btn" href="{{ url_for('proveedor.listar_proveedores') }}">Proveedores</a>
+        <a class="btn" href="{{ url_for('producto.listar_productos') }}">Productos</a>
+        <a class="btn" href="{{ url_for('stock.listar_stock') }}">Stock</a>
+        <a class="btn" href="{{ url_for('venta.crear_venta') }}">Nueva venta</a>
+        <a class="btn" href="{{ url_for('venta.listar_ventas') }}">Ver ventas</a>
+        <a class="btn" href="{{ url_for('reparacion.listar_reparaciones') }}">Reparaciones</a>
+        <a class="btn" href="{{ url_for('turno.calendario_turnos') }}">Agenda</a>
+        <a class="btn" href="{{ url_for('factura.listar_facturas') }}">Facturas</a>
+        <a class="btn" href="{{ url_for('reporte.dashboard_reportes') }}">Reportes</a>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Últimas ventas</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for v in datos.ultimas_ventas %}
+            <tr>
+                <td>{{ v[0] }} {{ v[1] }}</td>
+                <td>${{ v[2] }}</td>
+                <td>{{ v[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ultimas_ventas|length == 0 %}
+        <div class="empty-state">Todavía no hay ventas registradas.</div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Últimas reparaciones</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Equipo</th>
+                <th>Estado</th>
+                <th>Fecha ingreso</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in datos.ultimas_reparaciones %}
+            <tr>
+                <td>{{ r[0] }} {{ r[1] }}</td>
+                <td>{{ r[2] }}</td>
+                <td>{{ r[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ultimas_reparaciones|length == 0 %}
+        <div class="empty-state">Todavía no hay reparaciones registradas.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

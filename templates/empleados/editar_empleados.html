@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Editar empleado{% endblock %}
+{% block page_title %}Editar empleado{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Nombre</label>
+                <input type="text" name="nombre" value="{{ empleado[1] }}" required>
+            </div>
+
+            <div>
+                <label>Apellido</label>
+                <input type="text" name="apellido" value="{{ empleado[2] }}" required>
+            </div>
+
+            <div>
+                <label>DNI</label>
+                <input type="text" name="dni" value="{{ empleado[3] }}">
+            </div>
+
+            <div>
+                <label>Email</label>
+                <input type="email" name="email" value="{{ empleado[4] }}" required>
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="{{ empleado[5] }}">
+            </div>
+
+            <div>
+                <label>Rol</label>
+                <select name="rol_id" required>
+                    {% for rol in roles %}
+                        <option value="{{ rol[0] }}" {% if empleado[6] == rol[0] %}selected{% endif %}>
+                            {{ rol[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id" required>
+                    {% for sucursal in sucursales %}
+                        <option value="{{ sucursal[0] }}" {% if empleado[7] == sucursal[0] %}selected{% endif %}>
+                            {{ sucursal[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sueldo (USD)</label>
+                <input type="number" step="0.01" name="sueldo" value="{{ empleado[8] }}">
+            </div>
+
+            <div>
+                <label>Porcentaje comisión</label>
+                <input type="number" step="0.01" name="porcentaje_comision" value="{{ empleado[9] }}">
+            </div>
+        </div>
+
+        <br>
+
+        <label>
+            <input type="checkbox" name="modo_estudiante" value="1" {% if empleado[10] %}checked{% endif %} style="width:auto; display:inline-block; margin-right:8px;">
+            Modo estudiante (técnico)
+        </label>
+
+        <br><br>
+
+        <button class="btn" type="submit">Actualizar</button>
+        <a class="btn btn-secondary" href="{{ url_for('empleado.listar_empleados') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

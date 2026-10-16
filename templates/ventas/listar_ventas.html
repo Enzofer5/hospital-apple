@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Ventas{% endblock %}
+{% block page_title %}Gestión de ventas{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('venta.crear_venta') }}">
+    Nueva venta
+</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+
+        <div class="form-grid">
+
+            <div>
+                <label>Cliente</label>
+                <input type="text"
+                       name="cliente"
+                       value="{{ filtros.cliente }}">
+            </div>
+
+            <div>
+                <label>Vendedor</label>
+                <select name="vendedor_id">
+                    <option value="">Todos</option>
+
+                    {% for v in vendedores %}
+                    <option value="{{ v[0] }}"
+                        {% if filtros.vendedor_id == v[0]|string %}
+                            selected
+                        {% endif %}>
+                        {{ v[1] }} {{ v[2] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id">
+                    <option value="">Todas</option>
+
+                    {% for s in sucursales %}
+                    <option value="{{ s[0] }}"
+                        {% if filtros.sucursal_id == s[0]|string %}
+                            selected
+                        {% endif %}>
+                        {{ s[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Desde</label>
+                <input type="date"
+                       name="fecha_desde"
+                       value="{{ filtros.fecha_desde }}">
+            </div>
+
+            <div>
+                <label>Hasta</label>
+                <input type="date"
+                       name="fecha_hasta"
+                       value="{{ filtros.fecha_hasta }}">
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn"
+                type="submit"
+                name="buscar"
+                value="1">
+            Buscar
+        </button>
+
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+
+<div class="empty-state">
+    Utilizá los filtros para buscar ventas.
+</div>
+
+{% else %}
+
+<table>
+
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Vendedor</th>
+            <th>Sucursal</th>
+            <th>Tipo</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for venta in ventas %}
+
+        <tr>
+
+            <td>{{ venta[0] }}</td>
+
+            <td>{{ venta[1] }}</td>
+
+            <td>
+                {{ venta[2] }}
+                {{ venta[3] }}
+            </td>
+
+            <td>
+                {{ venta[4] }}
+                {{ venta[5] }}
+            </td>
+
+            <td>{{ venta[6] }}</td>
+
+            <td>{{ venta[7] }}</td>
+
+            <td>
+                $ {{ venta[8] }}
+            </td>
+
+            <td>{{ venta[9] }}</td>
+
+            <td>
+                <a class="btn"
+                   href="{{ url_for('venta.detalle_venta', id=venta[0]) }}">
+                    Ver
+                </a>
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% if ventas|length == 0 %}
+<div class="empty-state">
+    No se encontraron ventas.
+</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

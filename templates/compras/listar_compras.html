@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Compras{% endblock %}
+{% block page_title %}Compras a proveedores{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('compra.crear_compra') }}">Nueva compra</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Proveedor</label>
+                <select name="proveedor_id">
+                    <option value="">Todos</option>
+                    {% for p in proveedores %}
+                        <option value="{{ p[0] }}" {% if filtros.proveedor_id == p[0]|string %}selected{% endif %}>
+                            {{ p[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Desde</label>
+                <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}">
+            </div>
+
+            <div>
+                <label>Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}">
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar compras.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th>Sucursal</th>
+            <th>Usuario</th>
+            <th>Factura</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for c in compras %}
+        <tr>
+            <td>{{ c[1] }}</td>
+            <td>{{ c[2] }}</td>
+            <td>{{ c[3] }}</td>
+            <td>{{ c[4] }} {{ c[5] }}</td>
+            <td>{{ c[6] or "Sin factura" }}</td>
+            <td>${{ c[7] }}</td>
+            <td>
+                <a class="btn" href="{{ url_for('compra.detalle_compra', id=c[0]) }}">Ver</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if compras|length == 0 %}
+    <div class="empty-state">No se encontraron compras.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

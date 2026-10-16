@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Recepción{% endblock %}
+{% block page_title %}Dashboard de Recepción{% endblock %}
+
+{% block content %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Reparaciones en curso</h3>
+        <p>{{ datos.reparaciones }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Clientes activos</h3>
+        <p>{{ datos.clientes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Ventas del mes</h3>
+        <p>${{ datos.ventas_mes }}</p>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Accesos rápidos</h2>
+    <br>
+
+    <div class="actions">
+        <a class="btn" href="{{ url_for('turno.calendario_turnos') }}">Agenda</a>
+        <a class="btn" href="{{ url_for('turno.crear_turno') }}">Nuevo turno</a>
+        <a class="btn" href="{{ url_for('turno.recordatorios_turnos') }}">Recordatorios pendientes</a>
+        <a class="btn" href="{{ url_for('reparacion.crear_reparacion') }}">Nueva reparación</a>
+        <a class="btn" href="{{ url_for('reparacion.listar_reparaciones') }}">Reparaciones</a>
+        <a class="btn" href="{{ url_for('cliente.listar_clientes') }}">Clientes</a>
+        <a class="btn" href="{{ url_for('producto.listar_productos') }}">Productos</a>
+        <a class="btn" href="{{ url_for('stock.listar_stock') }}">Stock</a>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Últimas reparaciones</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Equipo</th>
+                <th>Estado</th>
+                <th>Fecha ingreso</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in datos.ultimas_reparaciones %}
+            <tr>
+                <td>{{ r[0] }} {{ r[1] }}</td>
+                <td>{{ r[2] }}</td>
+                <td>{{ r[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ultimas_reparaciones|length == 0 %}
+        <div class="empty-state">Todavía no hay reparaciones registradas.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

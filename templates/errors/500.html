@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ocurrió un error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <img class="auth-logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Apple Hospital">
+        <div class="auth-logo">Algo salió mal</div>
+        <div class="auth-subtitle">
+            Ocurrió un error inesperado. Probá de nuevo; si el problema sigue, avisale al encargado del sistema.
+        </div>
+
+        <a class="btn" style="width:100%; display:flex;" href="/">Volver al inicio</a>
+    </div>
+</div>
+
+</body>
+</html>

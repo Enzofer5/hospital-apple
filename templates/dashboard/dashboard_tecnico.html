@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Técnico{% endblock %}
+{% block page_title %}Dashboard Técnico{% endblock %}
+
+{% block content %}
+
+{% if datos.modo_estudiante %}
+<div class="alert alert-warning">Modo estudiante activo</div>
+{% endif %}
+
+<div class="cards">
+    <div class="card">
+        <h3>Reparaciones activas</h3>
+        <p>{{ datos.reparaciones_activas }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Pendientes</h3>
+        <p>{{ datos.reparaciones_pendientes }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Mano de obra generada (mes)</h3>
+        <p>${{ "%.2f"|format(datos.mano_obra_mes) }}</p>
+    </div>
+
+    {% if datos.modalidad_pago == "comision" %}
+    <div class="card">
+        <h3>Comisión ({{ "%.2f"|format(datos.porcentaje_comision) }}%)</h3>
+        <p>${{ "%.2f"|format(datos.pago_mes) }}</p>
+    </div>
+    {% else %}
+    <div class="card">
+        <h3>Sueldo fijo mensual</h3>
+        <p>${{ "%.2f"|format(datos.pago_mes) }}</p>
+    </div>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Mis tareas</h2>
+    <br>
+
+    <div class="actions">
+        <a class="btn" href="{{ url_for('reparacion.listar_reparaciones') }}">Mis reparaciones</a>
+        <a class="btn" href="{{ url_for('turno.calendario_turnos') }}">Agenda</a>
+    </div>
+</div>
+
+<br>
+
+<div class="panel">
+    <h2>Mis últimas reparaciones asignadas</h2>
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Equipo</th>
+                <th>Estado</th>
+                <th>Fecha ingreso</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in datos.ultimas_reparaciones %}
+            <tr>
+                <td>{{ r[0] }} {{ r[1] }}</td>
+                <td>{{ r[2] }} {{ r[3] }}</td>
+                <td>{{ r[4] }}</td>
+                <td>{{ r[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if datos.ultimas_reparaciones|length == 0 %}
+        <div class="empty-state">Todavía no tenés reparaciones asignadas.</div>
+    {% endif %}
+</div>
+
+{% endblock %}

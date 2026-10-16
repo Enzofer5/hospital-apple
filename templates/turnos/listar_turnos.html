@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Agenda{% endblock %}
+{% block page_title %}Agenda de turnos{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('turno.crear_turno') }}">Nuevo turno</a>
+<a class="btn btn-secondary" href="{{ url_for('turno.recordatorios_turnos') }}">
+    Recordatorios pendientes
+</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Cliente / DNI</label>
+                <input type="text" name="cliente" value="{{ filtros.cliente }}">
+            </div>
+
+            <div>
+                <label>Técnico</label>
+                <select name="tecnico_id">
+                    <option value="">Todos</option>
+                    {% for t in tecnicos %}
+                        <option value="{{ t[0] }}" {% if filtros.tecnico_id == t[0]|string %}selected{% endif %}>
+                            {{ t[1] }} {{ t[2] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="pendiente" {% if filtros.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                    <option value="confirmado" {% if filtros.estado == "confirmado" %}selected{% endif %}>Confirmado</option>
+                    <option value="cancelado" {% if filtros.estado == "cancelado" %}selected{% endif %}>Cancelado</option>
+                    <option value="asistio" {% if filtros.estado == "asistio" %}selected{% endif %}>Asistió</option>
+                    <option value="no_asistio" {% if filtros.estado == "no_asistio" %}selected{% endif %}>No asistió</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Desde</label>
+                <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}">
+            </div>
+
+            <div>
+                <label>Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}">
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar turnos.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha y hora</th>
+            <th>Cliente</th>
+            <th>Teléfono</th>
+            <th>Técnico</th>
+            <th>Equipo</th>
+            <th>Estado</th>
+            <th>Observación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for t in turnos %}
+        <tr>
+            <td>{{ t[1] }}</td>
+
+            <td>
+                {{ t[2] }} {{ t[3] }}<br>
+                DNI: {{ t[4] }}
+            </td>
+
+            <td>{{ t[5] }}</td>
+
+            <td>{{ t[6] or "Sin" }} {{ t[7] or "asignar" }}</td>
+
+            <td>{{ t[10] or "Sin" }} {{ t[11] or "equipo" }}</td>
+
+            <td>
+                {% if t[8] == "pendiente" %}
+                    <span class="badge badge-warning">Pendiente</span>
+                {% elif t[8] == "confirmado" %}
+                    <span class="badge badge-success">Confirmado</span>
+                {% elif t[8] == "cancelado" %}
+                    <span class="badge badge-danger">Cancelado</span>
+                {% elif t[8] == "asistio" %}
+                    <span class="badge badge-success">Asistió</span>
+                {% elif t[8] == "no_asistio" %}
+                    <span class="badge badge-danger">No asistió</span>
+                {% else %}
+                    {{ t[8] }}
+                {% endif %}
+            </td>
+
+            <td>{{ t[9] }}</td>
+
+            <td>
+                <a class="btn btn-secondary" href="{{ url_for('turno.editar_turno', id=t[0]) }}">
+                    Editar
+                </a>
+
+                <a class="btn btn-danger"
+                   href="{{ url_for('turno.eliminar_turno', id=t[0]) }}"
+                   onclick="return confirm('¿Seguro que querés eliminar este turno?')">
+                    Eliminar
+                </a>
+
+                <br><br>
+
+                <a class="btn" href="{{ url_for('turno.cambiar_estado_turno', id=t[0], estado='confirmado') }}">
+                    Confirmar
+                </a>
+
+                <a class="btn btn-secondary" href="{{ url_for('turno.cambiar_estado_turno', id=t[0], estado='asistio') }}">
+                    Asistió
+                </a>
+
+                <a class="btn btn-danger" href="{{ url_for('turno.cambiar_estado_turno', id=t[0], estado='cancelado') }}">
+                    Cancelar
+                </a>
+
+                <a class="btn btn-secondary" href="{{ url_for('turno.cambiar_estado_turno', id=t[0], estado='no_asistio') }}">
+                    No asistió
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if turnos|length == 0 %}
+    <div class="empty-state">No se encontraron turnos.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

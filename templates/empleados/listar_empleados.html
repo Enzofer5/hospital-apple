@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Empleados{% endblock %}
+{% block page_title %}Gestión de empleados{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('empleado.crear_empleado') }}">Nuevo empleado</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Nombre o apellido</label>
+                <input type="text" name="nombre" value="{{ filtros.nombre }}">
+            </div>
+
+            <div>
+                <label>Rol</label>
+                <select name="rol_id">
+                    <option value="">Todos los roles</option>
+                    {% for rol in roles %}
+                        <option value="{{ rol[0] }}" {% if filtros.rol_id == rol[0]|string %}selected{% endif %}>
+                            {{ rol[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id">
+                    <option value="">Todas las sucursales</option>
+                    {% for sucursal in sucursales %}
+                        <option value="{{ sucursal[0] }}" {% if filtros.sucursal_id == sucursal[0]|string %}selected{% endif %}>
+                            {{ sucursal[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="1" {% if filtros.estado == "1" %}selected{% endif %}>Activos</option>
+                    <option value="0" {% if filtros.estado == "0" %}selected{% endif %}>Inactivos</option>
+                    <option value="todos" {% if filtros.estado == "todos" %}selected{% endif %}>Todos</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar empleados.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>DNI</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Rol</th>
+            <th>Sucursal</th>
+            <th>Sueldo (USD)</th>
+            <th>Comisión %</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for e in empleados %}
+        <tr>
+            <td>{{ e[1] }} {{ e[2] }}</td>
+            <td>{{ e[3] }}</td>
+            <td>{{ e[4] }}</td>
+            <td>{{ e[5] }}</td>
+            <td>{{ e[9] }}</td>
+            <td>{{ e[10] }}</td>
+            <td>${{ e[6] }}</td>
+            <td>{{ e[7] }}%</td>
+            <td>
+                {% if e[8] == 1 %}
+                    <span class="badge badge-success">Activo</span>
+                {% else %}
+                    <span class="badge badge-danger">Inactivo</span>
+                {% endif %}
+            </td>
+            <td>
+                <a class="btn btn-secondary" href="{{ url_for('empleado.editar_empleado', id=e[0]) }}">Editar</a>
+                <a class="btn btn-danger"
+                   href="{{ url_for('empleado.eliminar_empleado', id=e[0]) }}"
+                   onclick="return confirm('¿Seguro que querés dar de baja este empleado?')">
+                    Dar de baja
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if empleados|length == 0 %}
+    <div class="empty-state">No se encontraron empleados con esos filtros.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

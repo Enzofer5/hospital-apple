@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Editar producto{% endblock %}
+{% block page_title %}Editar producto{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" value="{{ producto[3] }}" required>
+            </div>
+
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" value="{{ producto[4] }}" required>
+            </div>
+
+            <div>
+                <label>Categoría</label>
+                <select name="categoria_id">
+                    <option value="">Sin categoría</option>
+                    {% for c in categorias %}
+                        <option value="{{ c[0] }}" {% if producto[2] == c[0] %}selected{% endif %}>
+                            {{ c[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Proveedor</label>
+                <select name="proveedor_id">
+                    <option value="">Sin proveedor</option>
+                    {% for p in proveedores %}
+                        <option value="{{ p[0] }}" {% if producto[1] == p[0] %}selected{% endif %}>
+                            {{ p[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Precio costo (USD)</label>
+                <input type="number" step="0.01" name="precio_costo_usd" value="{{ producto[6] }}">
+            </div>
+
+            <div>
+                <label>Precio venta (USD)</label>
+                <input type="number" step="0.01" name="precio_venta_usd" value="{{ producto[7] }}">
+            </div>
+
+            <div>
+                <label>Nueva foto</label>
+                <input type="file" name="foto" accept="image/*">
+            </div>
+        </div>
+
+        <br>
+
+        {% if producto[8] %}
+            <p>Foto actual:</p>
+            <a href="{{ url_for('static', filename=producto[8]) }}" target="_blank">
+                <img src="{{ url_for('static', filename=producto[8]) }}" width="120">
+            </a>
+            <br><br>
+        {% endif %}
+
+        <label>Descripción</label>
+        <textarea name="descripcion" rows="4">{{ producto[5] }}</textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Actualizar producto</button>
+        <a class="btn btn-secondary" href="{{ url_for('producto.listar_productos') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

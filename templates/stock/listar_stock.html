@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Stock{% endblock %}
+{% block page_title %}Stock de productos{% endblock %}
+
+{% block content %}
+
+{% if session.rol in ["Dueño", "Socio"] %}
+    <a class="btn" href="{{ url_for('stock.cargar_stock') }}">Cargar stock</a>
+    <a class="btn btn-secondary" href="{{ url_for('stock.movimientos_stock') }}">Ver movimientos</a>
+{% endif %}
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" value="{{ filtros.marca }}">
+            </div>
+
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" value="{{ filtros.modelo }}">
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id">
+                    <option value="">Todas</option>
+                    {% for s in sucursales %}
+                        <option value="{{ s[0] }}" {% if filtros.sucursal_id == s[0]|string %}selected{% endif %}>
+                            {{ s[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">Usá los filtros para buscar stock.</div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Foto</th>
+            <th>Producto</th>
+            <th>Sucursal</th>
+            <th>Cantidad</th>
+            <th>Costo (USD)</th>
+            <th>Venta (USD)</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for s in stock %}
+        <tr>
+            <td>
+                {% if s[8] %}
+                    <a href="{{ url_for('static', filename=s[8]) }}" target="_blank">
+                        <img src="{{ url_for('static', filename=s[8]) }}" width="60" style="border-radius:8px;">
+                    </a>
+                {% else %}
+                    Sin foto
+                {% endif %}
+            </td>
+            <td>
+                <strong>{{ s[1] }} {{ s[2] }}</strong><br>
+                {{ s[3] }}
+            </td>
+            <td>{{ s[4] }}</td>
+            <td>{{ s[5] }}</td>
+            <td>${{ s[6] }}</td>
+            <td>${{ s[7] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if stock|length == 0 %}
+    <div class="empty-state">No se encontró stock con esos filtros.</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

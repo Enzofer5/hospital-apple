@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva compra{% endblock %}
+{% block page_title %}Registrar compra{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+
+        <div class="form-grid">
+            <div>
+                <label>Proveedor</label>
+                <select name="proveedor_id" required>
+                    {% for p in proveedores %}
+                        <option value="{{ p[0] }}">{{ p[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id" required>
+                    {% for s in sucursales %}
+                        <option value="{{ s[0] }}">{{ s[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Número de factura proveedor</label>
+                <input type="text" name="numero_factura">
+            </div>
+        </div>
+
+        <br>
+
+        <h3>Productos comprados</h3>
+
+        <div id="productosCompra">
+            <div class="producto-compra" style="border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;">
+                <div class="form-grid">
+                    <div>
+                        <label>Producto</label>
+                        <select name="producto_id[]" required>
+                            {% for p in productos %}
+                                <option value="{{ p[0] }}">{{ p[1] }} {{ p[2] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Cantidad</label>
+                        <input type="number" name="cantidad[]" min="1" value="1" required>
+                    </div>
+
+                    <div>
+                        <label>Costo unitario (USD)</label>
+                        <input type="number" step="0.01" min="0" name="precio_costo[]" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-secondary" type="button" onclick="agregarProductoCompra()">
+            + Agregar producto
+        </button>
+
+        <br><br>
+
+        <label>Observación</label>
+        <textarea name="observacion" rows="4"></textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Registrar compra</button>
+        <a class="btn btn-secondary" href="{{ url_for('compra.listar_compras') }}">Volver</a>
+
+    </form>
+</div>
+
+<script>
+function agregarProductoCompra() {
+    const container = document.getElementById("productosCompra");
+
+    const item = document.createElement("div");
+    item.className = "producto-compra";
+    item.style = "border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;";
+
+    item.innerHTML = `
+        <div class="form-grid">
+            <div>
+                <label>Producto</label>
+                <select name="producto_id[]" required>
+                    {% for p in productos %}
+                        <option value="{{ p[0] }}">{{ p[1] }} {{ p[2] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Cantidad</label>
+                <input type="number" name="cantidad[]" min="1" value="1" required>
+            </div>
+
+            <div>
+                <label>Costo unitario</label>
+                <input type="number" step="0.01" min="0" name="precio_costo[]" required>
+            </div>
+
+            <div>
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-danger" onclick="this.closest('.producto-compra').remove()">
+                    Quitar
+                </button>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(item);
+}
+</script>
+
+{% endblock %}

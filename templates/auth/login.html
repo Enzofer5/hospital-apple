@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <img class="auth-logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Apple Hospital">
+        <div class="auth-logo">Apple Hospital</div>
+        <div class="auth-subtitle">Iniciá sesión para continuar</div>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="alert alert-{{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <br><br>
+
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+
+            <br><br>
+
+            <button class="btn" type="submit">Ingresar</button>
+        </form>
+
+        <br>
+
+        <a href="{{ url_for('auth.recuperar_password') }}">¿Olvidaste tu contraseña?</a>
+
+        <div class="auth-footer">
+            ¿Sos un negocio nuevo? <a href="{{ url_for('auth.crear_dueno') }}">Registrate acá</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

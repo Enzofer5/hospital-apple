@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva nota técnica{% endblock %}
+{% block page_title %}Nueva nota técnica{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+    <h2>Equipo</h2>
+    <p><strong>Cliente:</strong> {{ equipo[1] }} {{ equipo[2] }}</p>
+    <p><strong>Equipo:</strong> {{ equipo[3] }} {{ equipo[4] }}</p>
+    <p><strong>N° Serie / IMEI:</strong> {{ equipo[5] }}</p>
+</div>
+
+<br>
+
+<div class="form-box">
+    <form method="POST" enctype="multipart/form-data">
+        <label>Diagnóstico</label>
+        <textarea name="diagnostico" rows="4" required></textarea>
+
+        <br><br>
+
+        <label>Notas técnicas</label>
+        <textarea name="notas_tecnicas" rows="6"></textarea>
+
+        <br><br>
+
+        <div class="form-grid">
+            <div>
+                <label>Costo mano de obra (USD)</label>
+                <input type="number" step="0.01" name="costo_mano_obra" value="0">
+            </div>
+
+            <div>
+                <label>Costo repuestos (USD)</label>
+                <input type="number" step="0.01" name="costo_repuestos" value="0">
+            </div>
+        </div>
+
+        <br>
+
+        <label>Fotos</label>
+        <input type="file" name="fotos[]" accept="image/*" multiple>
+
+        <br><br>
+
+        <button class="btn" type="submit">Guardar nota técnica</button>
+    </form>
+</div>
+
+<br>
+
+<a class="btn btn-secondary" href="{{ url_for('reparacion.detalle_reparacion', id=equipo[0]) }}">
+    Volver a la reparación
+</a>
+
+{% endblock %}

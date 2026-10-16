@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Cargar stock{% endblock %}
+{% block page_title %}Cargar stock{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Producto</label>
+                <select name="producto_id" required>
+                    {% for p in productos %}
+                        <option value="{{ p[0] }}">{{ p[1] }} {{ p[2] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Sucursal</label>
+                <select name="sucursal_id" required>
+                    {% for s in sucursales %}
+                        <option value="{{ s[0] }}">{{ s[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Cantidad a ingresar</label>
+                <input type="number" name="cantidad" min="1" required>
+            </div>
+        </div>
+
+        <br>
+
+        <label>Observación</label>
+        <textarea name="observacion" rows="4"></textarea>
+
+        <br><br>
+
+        <button class="btn" type="submit">Cargar stock</button>
+        <a class="btn btn-secondary" href="{{ url_for('stock.listar_stock') }}">Volver</a>
+    </form>
+</div>
+
+{% endblock %}

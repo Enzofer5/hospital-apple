@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registrar empresa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+
+<div class="auth-page">
+    <div class="auth-card auth-card-wide">
+        <img class="auth-logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="Apple Hospital">
+        <div class="auth-logo">Apple Hospital</div>
+        <div class="auth-subtitle">Registrá tu empresa, la sucursal principal y tu usuario dueño para empezar a usar el sistema.</div>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="alert alert-{{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+
+            <h3>Datos de la empresa</h3>
+
+            <label>Nombre de la empresa</label>
+            <input type="text" name="empresa_nombre" required>
+
+            <br><br>
+
+            <label>Email de la empresa</label>
+            <input type="email" name="empresa_email">
+
+            <br><br>
+
+            <label>Teléfono de la empresa</label>
+            <input type="text" name="empresa_telefono">
+
+            <br><br>
+
+            <label>Dirección de la empresa</label>
+            <input type="text" name="empresa_direccion">
+
+            <h3>Sucursal principal</h3>
+
+            <label>Nombre de la sucursal</label>
+            <input type="text" name="sucursal_nombre" value="Sucursal Central" required>
+
+            <h3>Datos del dueño</h3>
+
+            <label>Nombre</label>
+            <input type="text" name="nombre" required>
+
+            <br><br>
+
+            <label>Apellido</label>
+            <input type="text" name="apellido" required>
+
+            <br><br>
+
+            <label>DNI</label>
+            <input type="text" name="dni">
+
+            <br><br>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <br><br>
+
+            <label>Teléfono</label>
+            <input type="text" name="telefono">
+
+            <br><br>
+
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+
+            <button class="btn" type="submit">Registrar empresa</button>
+
+        </form>
+
+        <div class="auth-footer">
+            ¿Ya tenés una cuenta? <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Facturas{% endblock %}
+{% block page_title %}Gestión de facturas{% endblock %}
+
+{% block content %}
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Cliente / DNI</label>
+                <input type="text" name="cliente" value="{{ filtros.cliente }}">
+            </div>
+
+            <div>
+                <label>Tipo</label>
+                <select name="tipo">
+                    <option value="">Todos</option>
+                    <option value="A" {% if filtros.tipo == "A" %}selected{% endif %}>A</option>
+                    <option value="B" {% if filtros.tipo == "B" %}selected{% endif %}>B</option>
+                    <option value="C" {% if filtros.tipo == "C" %}selected{% endif %}>C</option>
+                    <option value="X" {% if filtros.tipo == "X" %}selected{% endif %}>X</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="emitida" {% if filtros.estado == "emitida" %}selected{% endif %}>Emitida</option>
+                    <option value="anulada" {% if filtros.estado == "anulada" %}selected{% endif %}>Anulada</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Desde</label>
+                <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}">
+            </div>
+
+            <div>
+                <label>Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}">
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">
+        Usá los filtros para buscar facturas.
+    </div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Tipo</th>
+            <th>Concepto</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for f in facturas %}
+        <tr>
+            <td>{{ f[1] }}</td>
+            <td>{{ f[2] }}</td>
+            <td>{{ f[3] }}</td>
+            <td>{{ f[7] }} {{ f[8] }}</td>
+            <td>${{ f[4] }}</td>
+            <td>{{ f[5] }}</td>
+            <td>{{ f[6] }}</td>
+            <td>
+                <a class="btn" href="{{ url_for('factura.detalle_factura', id=f[0]) }}">Ver</a>
+
+                {% if f[5] == "emitida" %}
+                    <a class="btn btn-danger"
+                       href="{{ url_for('factura.anular_factura', id=f[0]) }}"
+                       onclick="return confirm('¿Seguro que querés anular esta factura?')">
+                        Anular
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if facturas|length == 0 %}
+    <div class="empty-state">
+        No se encontraron facturas.
+    </div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

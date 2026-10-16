@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+{% block page_title %}Gestión de clientes{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="{{ url_for('cliente.crear_cliente') }}">Nuevo cliente</a>
+
+<br><br>
+
+<div class="form-box">
+    <form method="GET">
+        <div class="form-grid">
+            <div>
+                <label>Nombre o apellido</label>
+                <input type="text" name="nombre" value="{{ filtros.nombre }}">
+            </div>
+
+            <div>
+                <label>DNI</label>
+                <input type="text" name="dni" value="{{ filtros.dni }}">
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="{{ filtros.telefono }}">
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option value="1" {% if filtros.estado == "1" %}selected{% endif %}>Activos</option>
+                    <option value="0" {% if filtros.estado == "0" %}selected{% endif %}>Inactivos</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <button class="btn" type="submit" name="buscar" value="1">Buscar</button>
+    </form>
+</div>
+
+{% if filtros.buscar != "1" %}
+    <div class="empty-state">
+        Usá los filtros para buscar clientes.
+    </div>
+{% else %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>DNI</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Localidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for c in clientes %}
+        <tr>
+            <td>{{ c[1] }} {{ c[2] }}</td>
+            <td>{{ c[3] }}</td>
+            <td>{{ c[4] }}</td>
+            <td>{{ c[5] }}</td>
+            <td>{{ c[8] }}</td>
+            <td>
+                {% if c[9] == 1 %}
+                    Activo
+                {% else %}
+                    Inactivo
+                {% endif %}
+            </td>
+            <td>
+                {% if session.rol in ["Dueño", "Socio"] %}
+                    <a href="{{ url_for('cliente.editar_cliente', id=c[0]) }}">Editar</a>
+                    |
+                    <a href="{{ url_for('cliente.eliminar_cliente', id=c[0]) }}"
+                       onclick="return confirm('¿Seguro que querés dar de baja este cliente?')">
+                        Dar de baja
+                    </a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if clientes|length == 0 %}
+    <div class="empty-state">
+        No se encontraron clientes con esos filtros.
+    </div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
